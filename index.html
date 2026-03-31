@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Pizzería Nápoles de Chipiona — La mejor pizza de Chipiona. Ingredientes frescos, sabor napolitano auténtico. Pedidos a domicilio." />
+  <title>Pizzería Nápoles — Chipiona</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- ===== HEADER ===== -->
+<header id="header">
+  <div class="container">
+    <nav class="nav-container">
+      <a href="#hero" class="nav-logo" aria-label="Pizzería Nápoles inicio">
+        <span class="logo-icon">🍕</span>
+        <div class="logo-text">
+          <span class="logo-name">Pizzería Nápoles</span>
+          <span class="logo-sub">Chipiona</span>
+        </div>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="#hero">Inicio</a></li>
+        <li><a href="#menu">Menú</a></li>
+        <li><a href="#offers">Ofertas</a></li>
+        <li><a href="#about">Nosotros</a></li>
+        <li><a href="#contact">Contacto</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <button class="cart-btn" onclick="openCart()" aria-label="Abrir carrito">
+          🛒
+          <span class="cart-count" id="cartCount">0</span>
+        </button>
+        <button class="btn-order" onclick="document.getElementById('menu').scrollIntoView({behavior:'smooth'})">Pedir Ahora</button>
+        <button class="hamburger" id="hamburger" aria-label="Menú móvil">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </nav>
+  </div>
+
+  <!-- Mobile Menu -->
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#hero">🏠 Inicio</a>
+    <a href="#menu">🍕 Menú</a>
+    <a href="#offers">🏷️ Ofertas</a>
+    <a href="#about">❤️ Nosotros</a>
+    <a href="#contact">📞 Contacto</a>
+  </div>
+</header>
+
+<!-- ===== HERO ===== -->
+<section id="hero">
+  <div class="container">
+    <div class="hero-content reveal">
+      <div class="hero-badge">
+        🏆 Más de 10 años deleitando Chipiona
+      </div>
+      <h1 class="hero-title">
+        La mejor pizza<br><span>de Chipiona</span>
+      </h1>
+      <p class="hero-subtitle">
+        Ingredientes frescos, sabor napolitano auténtico. Horno de leña y recetas tradicionales de Nápoles.
+      </p>
+      <div class="hero-actions">
+        <a href="#menu" class="btn btn-secondary">🍕 Ver Menú</a>
+        <a href="#offers" class="btn btn-outline">🏷️ Ver Ofertas</a>
+      </div>
+    </div>
+  </div>
+  <div class="hero-scroll" aria-hidden="true">Descubre más</div>
+</section>
+
+<!-- ===== OFFERS ===== -->
+<section id="offers">
+  <div class="container">
+    <h2 class="section-title reveal">🏷️ Ofertas Especiales</h2>
+    <p class="section-subtitle reveal">¡No te pierdas nuestras mejores promociones!</p>
+
+    <div class="offers-grid">
+      <div class="offer-card reveal">
+        <span class="offer-tag">HOT</span>
+        <div class="offer-icon">🍕🍕</div>
+        <h3>2×1 los Martes</h3>
+        <p>Dos pizzas al precio de una. Válido todos los martes durante todo el día.</p>
+        <div class="offer-price">¡GRATIS! <span>segunda pizza</span></div>
+        <br/>
+        <button class="btn btn-primary" onclick="document.getElementById('menu').scrollIntoView({behavior:'smooth'})">Aprovechar oferta</button>
+      </div>
+
+      <div class="offer-card reveal">
+        <span class="offer-tag">FAM</span>
+        <div class="offer-icon">👨‍👩‍👧‍👦</div>
+        <h3>Menú Familiar</h3>
+        <p>2 pizzas grandes + 4 bebidas + palitos de pan. ¡Perfecto para toda la familia!</p>
+        <div class="offer-price">19,99€ <span>antes 28€</span></div>
+        <br/>
+        <button class="btn btn-primary" onclick="document.getElementById('menu').scrollIntoView({behavior:'smooth'})">Pedir menú familiar</button>
+      </div>
+
+      <div class="offer-card reveal">
+        <span class="offer-tag">DEAL</span>
+        <div class="offer-icon">🍕🥤🍮</div>
+        <h3>Pizza + Bebida + Postre</h3>
+        <p>Pizza mediana a elegir, bebida 33cl y postre casero. ¡El combo perfecto!</p>
+        <div class="offer-price">12,99€ <span>antes 18€</span></div>
+        <br/>
+        <button class="btn btn-primary" onclick="document.getElementById('menu').scrollIntoView({behavior:'smooth'})">Pedir combo</button>
+      </div>
+    </div>
+
+    <!-- Countdown -->
+    <div class="countdown-section reveal">
+      <h3>⚡ Oferta Flash del Día</h3>
+      <p>¡Descuento del 20% en todas las pizzas especiales! Termina hoy a medianoche.</p>
+      <div class="countdown-timer">
+        <div class="countdown-item">
+          <span class="num" id="cd-hours">00</span>
+          <span class="label">Horas</span>
+        </div>
+        <div class="countdown-item">
+          <span class="num" id="cd-minutes">00</span>
+          <span class="label">Minutos</span>
+        </div>
+        <div class="countdown-item">
+          <span class="num" id="cd-seconds">00</span>
+          <span class="label">Segundos</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== MENU ===== -->
+<section id="menu">
+  <div class="container">
+    <h2 class="section-title reveal">🍕 Nuestro Menú</h2>
+    <p class="section-subtitle reveal">Ingredientes frescos del mercado local, masa artesanal y hornos tradicionales</p>
+
+    <div class="menu-tabs reveal">
+      <button class="tab-btn" data-target="panel-clasicas">🍕 Clásicas</button>
+      <button class="tab-btn" data-target="panel-especiales">⭐ Especiales</button>
+      <button class="tab-btn" data-target="panel-entrantes">🧄 Entrantes</button>
+      <button class="tab-btn" data-target="panel-bebidas">🥤 Bebidas</button>
+      <button class="tab-btn" data-target="panel-postres">🍮 Postres</button>
+    </div>
+
+    <!-- Pizzas Clásicas -->
+    <div class="menu-panel" id="panel-clasicas">
+      <div class="menu-grid">
+        <div class="menu-card reveal">
+          <div class="menu-card-img">🍕</div>
+          <div class="menu-card-body">
+            <h4>Margarita</h4>
+            <p>Tomate, mozzarella fresca, albahaca. La clásica de siempre.</p>
+            <div class="menu-card-footer">
+              <span class="menu-price">8,99€</span>
+              <button class="add-btn" onclick="addToCart('Margarita', 8.99, '🍕')">+ Añadir</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="menu-card reveal">
+          <div class="menu-card-img">🧀</div>
+          <div class="menu-card-body">
+            <h4>Cuatro Quesos</h4>
+            <p>Mozzarella, gouda, parmesano y roquefort. Para los amantes del queso.</p>
+            <div class="menu-card-footer">
+              <span class="menu-price">10,99€</span>
+              <button class="add-btn" onclick="addToCart('Cuatro Quesos', 10.99, '🧀')">+ Añadir</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="menu-card reveal">
+          <div class="menu-card-img">🍗</div>
+          <div class="menu-card-body">
+            <h4>Barbacoa</h4>
+            <p>Pollo a la parrilla, bacon crujiente, salsa BBQ y cebolla caramelizada.</p>
+            <div class="menu-card-footer">
+              <span class="menu-price">11,99€</span>
+              <button class="add-btn" onclick="addToCart('Barbacoa', 11.99, '🍗')">+ Añadir</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="menu-card reveal">
+          <div class="menu-card-img">🌶️</div>
+          <div class="menu-card-body">
+            <h4>Pepperoni</h4>
+            <p>Tomate, mozzarella y generosa cantidad de pepperoni artesanal.</p>
+            <div class="menu-card-footer">
+              <span class="menu-price">10,99€</span>
+              <button class="add-btn" onclick="addToCart('Pepperoni', 10.99, '🌶️')">+ Añadir</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="menu-card reveal">
+          <div class="menu-card-img">🥦</div>
+          <div class="menu-card-body">
+            <h4>Vegetal</h4>
+            <p>Pimientos, champiñones, cebolla, aceitunas y tomate cherry. 100% vegetal.</p>
+            <div class="menu-card-footer">
+              <span class="menu-price">9,99€</span>
+              <button class="add-btn" onclick="addToCart('Vegetal', 9.99, '🥦')">+ Añadir</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="menu-card reveal">
+          <div class="menu-card-img">🥩</div>
+          <div class="menu-card-body">
+            <h4>Jamón y Queso</h4>
+            <p>Jamón cocido de primera calidad, mozzarella fundida y salsa de tomate.</p>
+            <div class="menu-card-footer">
+              <span class="menu-price">9,99€</span>
+              <button class="add-btn" onclick="addToCart('Jamón y Queso', 9.99, '🥩')">+ Añadir</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pizzas Especiales -->
+    <div class="menu-panel" id="panel-especiales">
+      <div class="menu-grid">
+        <div class="menu-card reveal">
+          <div class="menu-card-img">⭐</div>
+          <div class="menu-card-body">
+            <h4>Nápoles Especial</h4>
+            <p>La receta secreta de la casa. Ingredientes seleccionados con el toque napolitano auténtico.</p>
+            <div class="menu-card-footer">
+              <span class="menu-price">13,99€</span>
+              <button class="add-btn" onclick="addToCart('Nápoles Especial', 13.99, '⭐')">+ Añadir</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="menu-card reveal">
+          <div class="menu-card-img">🦐</div>
+          <div class="menu-card-body">
+            <h4>Mar y Tierra</h4>
+            <p>Gambas al ajillo, pollo asado, pimientos y tomate. El surf &amp; turf en pizza.</p>
+            <div class="menu-card-footer">
+              <span class="menu-price">12,99€</span>
+              <button class="add-btn" onclick="addToCart('Mar y Tierra', 12.99, '🦐')">+ Añadir</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="menu-card reveal">
+          <div class="menu-card-img">🍄</div>
+          <div class="menu-card-body">
+            <h4>Trufa Negra</h4>
+            <p>Crema de trufa negra, mozzarella di bufala y rúcula fresca. Alta cocina en pizza.</p>
+            <div class="menu-card-footer">
+              <span class="menu-price">14,99€</span>
+              <button class="add-btn" onclick="addToCart('Trufa Negra', 14.99, '🍄')">+ Añadir</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="menu-card reveal">
+          <div class="menu-card-img">🔥</div>
+          <div class="menu-card-body">
+            <h4>Diavola Picante</h4>
+            <p>Salami picante, jalapeños frescos y nduja calabresa. ¡Para los valientes!</p>
+            <div class="menu-card-footer">
+              <span class="menu-price">11,99€</span>
+              <button class="add-btn" onclick="addToCart('Diavola Picante', 11.99, '🔥')">+ Añadir</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Entrantes -->
+    <div class="menu-panel" id="panel-entrantes">
+      <div class="menu-grid">
+        <div class="menu-card reveal">
+          <div class="menu-card-img">🥖</div>
+          <div class="menu-card-body">
+            <h4>Palitos de Pan con Ajo</h4>
+            <p>Palitos de masa artesanal con mantequilla de ajo y hierbas provenzales.</p>
+            <div class="menu-card-footer">
+              <span class="menu-price">3,99€</span>
+              <button class="add-btn" onclick="addToCart('Palitos de Pan con Ajo', 3.99, '🥖')">+ Añadir</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="menu-card reveal">
+          <div class="menu-card-img">🍗</div>
+          <div class="menu-card-body">
+            <h4>Alitas BBQ (8 uds)</h4>
+            <p>Alitas de pollo marinadas y asadas con salsa barbacoa casera. ¡Irresistibles!</p>
+            <div class="menu-card-footer">
+              <span class="menu-price">6,99€</span>
+              <button class="add-btn" onclick="addToCart('Alitas BBQ', 6.99, '🍗')">+ Añadir</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="menu-card reveal">
+          <div class="menu-card-img">🥔</div>
+          <div class="menu-card-body">
+            <h4>Patatas Bravas</h4>
+            <p>Patatas crujientes con salsa brava picante y alioli casero. Sabor español.</p>
+            <div class="menu-card-footer">
+              <span class="menu-price">4,99€</span>
+              <button class="add-btn" onclick="addToCart('Patatas Bravas', 4.99, '🥔')">+ Añadir</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bebidas -->
+    <div class="menu-panel" id="panel-bebidas">
+      <div class="menu-grid">
+        <div class="menu-card reveal">
+          <div class="menu-card-img">🥤</div>
+          <div class="menu-card-body">
+            <h4>Coca-Cola 33cl</h4>
+            <p>Refresco Coca-Cola bien frío. También disponible sin azúcar.</p>
+            <div class="menu-card-footer">
+              <span class="menu-price">1,99€</span>
+              <button class="add-btn" onclick="addToCart('Coca-Cola 33cl', 1.99, '🥤')">+ Añadir</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="menu-card reveal">
+          <div class="menu-card-img">💧</div>
+          <div class="menu-card-body">
+            <h4>Agua 50cl</h4>
+            <p>Agua mineral natural o con gas. Refresco puro y natural.</p>
+            <div class="menu-card-footer">
+              <span class="menu-price">1,49€</span>
+              <button class="add-btn" onclick="addToCart('Agua 50cl', 1.49, '💧')">+ Añadir</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="menu-card reveal">
+          <div class="menu-card-img">🍺</div>
+          <div class="menu-card-body">
+            <h4>Cerveza Cruzcampo</h4>
+            <p>La cerveza gaditana por excelencia. Bien fría y espumosa.</p>
+            <div class="menu-card-footer">
+              <span class="menu-price">2,49€</span>
+              <button class="add-btn" onclick="addToCart('Cerveza Cruzcampo', 2.49, '🍺')">+ Añadir</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="menu-card reveal">
+          <div class="menu-card-img">🍷</div>
+          <div class="menu-card-body">
+            <h4>Sangría 1L</h4>
+            <p>Sangría artesanal con vino tinto, frutas de temporada y especias. Perfecta en verano.</p>
+            <div class="menu-card-footer">
+              <span class="menu-price">7,99€</span>
+              <button class="add-btn" onclick="addToCart('Sangría 1L', 7.99, '🍷')">+ Añadir</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Postres -->
+    <div class="menu-panel" id="panel-postres">
+      <div class="menu-grid">
+        <div class="menu-card reveal">
+          <div class="menu-card-img">🍮</div>
+          <div class="menu-card-body">
+            <h4>Tiramisú Casero</h4>
+            <p>Receta tradicional italiana con bizcochos savoiardi, mascarpone y café. Hecho en casa.</p>
+            <div class="menu-card-footer">
+              <span class="menu-price">4,99€</span>
+              <button class="add-btn" onclick="addToCart('Tiramisú Casero', 4.99, '🍮')">+ Añadir</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="menu-card reveal">
+          <div class="menu-card-img">🍫</div>
+          <div class="menu-card-body">
+            <h4>Coulant de Chocolate</h4>
+            <p>Bizcocho de chocolate caliente con corazón líquido. Servido con bola de helado.</p>
+            <div class="menu-card-footer">
+              <span class="menu-price">4,49€</span>
+              <button class="add-btn" onclick="addToCart('Coulant de Chocolate', 4.49, '🍫')">+ Añadir</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="menu-card reveal">
+          <div class="menu-card-img">🍦</div>
+          <div class="menu-card-body">
+            <h4>Helado (3 bolas)</h4>
+            <p>Selección de sabores: vainilla, chocolate, fresa o pistacho. Cremoso y delicioso.</p>
+            <div class="menu-card-footer">
+              <span class="menu-price">3,99€</span>
+              <button class="add-btn" onclick="addToCart('Helado 3 bolas', 3.99, '🍦')">+ Añadir</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== ABOUT ===== -->
+<section id="about">
+  <div class="container">
+    <div class="about-grid">
+      <div class="about-text reveal">
+        <h2>Nuestra Historia 🍕❤️</h2>
+        <p>
+          La Pizzería Nápoles nació en Chipiona hace más de <strong>10 años</strong>, con un sueño sencillo: traer el auténtico sabor napolitano a la Costa de la Luz. Fundada con amor por la familia Rossi, cada pizza se elabora siguiendo las recetas tradicionales transmitidas de generación en generación.
+        </p>
+        <p>
+          Utilizamos únicamente <strong>ingredientes frescos</strong> del mercado local y de pequeños productores andaluces. Nuestra masa madre fermenta durante 48 horas y nuestro horno de leña alcanza los 450°C para dar ese toque crujiente y ahumado que nos diferencia.
+        </p>
+        <p>
+          Somos más que una pizzería: somos <strong>parte de Chipiona</strong>. Hemos estado en bodas, cumpleaños, noches de verano en la playa… y en cada mesa seguimos poniendo el mismo cariño del primer día.
+        </p>
+
+        <div class="about-stats">
+          <div class="stat-item">
+            <div class="stat-icon">🏆</div>
+            <div class="stat-num">10+</div>
+            <div class="stat-label">Años sirviendo</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-icon">😊</div>
+            <div class="stat-num">Miles</div>
+            <div class="stat-label">Clientes felices</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-icon">🌿</div>
+            <div class="stat-num">100%</div>
+            <div class="stat-label">Ingredientes frescos</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="about-image reveal">
+        <div class="about-image-icon">🍕</div>
+        <h3>Auténtica Pizza Napolitana</h3>
+        <p>Horno de leña · Masa artesanal · Ingredientes locales</p>
+        <br/>
+        <p>📍 Chipiona, Cádiz, Andalucía</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== TESTIMONIALS ===== -->
+<section id="testimonials">
+  <div class="container">
+    <h2 class="section-title reveal">💬 Lo que dicen nuestros clientes</h2>
+    <p class="section-subtitle reveal">Más de 500 reseñas positivas en Google</p>
+
+    <div class="testimonials-slider">
+      <div class="testimonials-track" id="testimonialsTrack">
+
+        <div class="testimonial-card">
+          <div class="testimonial-inner reveal">
+            <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
+            <p class="testimonial-text">
+              "¡La mejor pizza que he comido fuera de Italia! La masa es increíble, fina y crujiente por los bordes. La Nápoles Especial es espectacular. Ya es nuestra pizzería de cabecera para las noches de verano en Chipiona."
+            </p>
+            <div class="testimonial-author">
+              <div class="testimonial-avatar">M</div>
+              <div class="testimonial-info">
+                <div class="name">María García</div>
+                <div class="role">Cliente habitual · Chipiona</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-card">
+          <div class="testimonial-inner reveal">
+            <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
+            <p class="testimonial-text">
+              "Pedimos el menú familiar y fue un éxito total con los niños. El reparto a domicilio fue rapidísimo y la pizza llegó caliente. El tiramisú casero estaba de escándalo. ¡Volveremos seguro!"
+            </p>
+            <div class="testimonial-author">
+              <div class="testimonial-avatar">J</div>
+              <div class="testimonial-info">
+                <div class="name">Juan Carlos López</div>
+                <div class="role">Cliente familiar · Sanlúcar de Barrameda</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-card">
+          <div class="testimonial-inner reveal">
+            <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
+            <p class="testimonial-text">
+              "Llevo viniendo desde que abrieron y nunca me han decepcionado. La pizza de Trufa Negra es una obra de arte culinaria. El ambiente, la atención y la calidad son siempre 10/10. ¡Chipiona tiene suerte de tenerlos!"
+            </p>
+            <div class="testimonial-author">
+              <div class="testimonial-avatar">A</div>
+              <div class="testimonial-info">
+                <div class="name">Ana Martínez</div>
+                <div class="role">Cliente fiel desde 2015 · Chipiona</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="slider-controls">
+        <button class="slider-btn" id="sliderPrev" aria-label="Anterior">&#8592;</button>
+        <div class="slider-dots">
+          <div class="dot active"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+        </div>
+        <button class="slider-btn" id="sliderNext" aria-label="Siguiente">&#8594;</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CONTACT ===== -->
+<section id="contact">
+  <div class="container">
+    <h2 class="section-title reveal">📞 Contacto e Información</h2>
+    <p class="section-subtitle reveal">¡Estamos aquí para servirte!</p>
+
+    <div class="contact-grid">
+      <div class="contact-info reveal">
+        <h3>Encuéntranos</h3>
+
+        <div class="info-item">
+          <div class="info-icon">📍</div>
+          <div class="info-text">
+            <div class="label">Dirección</div>
+            <div class="value">Chipiona, Cádiz, Andalucía</div>
+          </div>
+        </div>
+
+        <div class="info-item">
+          <div class="info-icon">📞</div>
+          <div class="info-text">
+            <div class="label">Teléfono</div>
+            <div class="value"><a href="tel:956000000">956 000 000</a></div>
+          </div>
+        </div>
+
+        <div class="info-item">
+          <div class="info-icon">🕐</div>
+          <div class="info-text">
+            <div class="label">Horario</div>
+            <div class="value">Lunes – Domingo: 12:00 – 23:30</div>
+          </div>
+        </div>
+
+        <div class="info-item">
+          <div class="info-icon">🛵</div>
+          <div class="info-text">
+            <div class="label">Delivery</div>
+            <div class="value">Reparto a domicilio disponible todos los días</div>
+          </div>
+        </div>
+
+        <div class="info-item">
+          <div class="info-icon">💬</div>
+          <div class="info-text">
+            <div class="label">WhatsApp</div>
+            <div class="value"><a href="https://wa.me/34956000000" target="_blank" rel="noopener">Escríbenos por WhatsApp</a></div>
+          </div>
+        </div>
+
+        <div class="contact-map">
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d25434.27!2d-6.4371!3d36.7338!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd0e12a72d5c5b7b%3A0x61c15a21a62e8f7c!2sChipiona%2C+C%C3%A1diz!5e0!3m2!1ses!2ses!4v1"
+            allowfullscreen=""
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            title="Chipiona en Google Maps">
+          </iframe>
+        </div>
+      </div>
+
+      <div class="contact-form reveal">
+        <h3>Envíanos un Mensaje</h3>
+        <form id="contactForm" novalidate>
+          <div class="form-group">
+            <label for="contactName">Nombre</label>
+            <input type="text" id="contactName" name="name" placeholder="Tu nombre" required />
+          </div>
+          <div class="form-group">
+            <label for="contactEmail">Email</label>
+            <input type="email" id="contactEmail" name="email" placeholder="tu@email.com" required />
+          </div>
+          <div class="form-group">
+            <label for="contactMsg">Mensaje</label>
+            <textarea id="contactMsg" name="message" placeholder="¿En qué podemos ayudarte?" required></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary" style="width:100%">📨 Enviar Mensaje</button>
+          <div class="form-success" id="formSuccess">
+            ✅ ¡Mensaje enviado! Te responderemos en menos de 24 horas.
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer id="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="#hero" class="nav-logo">
+          <span class="logo-icon">🍕</span>
+          <div class="logo-text">
+            <span class="logo-name">Pizzería Nápoles</span>
+            <span class="logo-sub">Chipiona</span>
+          </div>
+        </a>
+        <p>Más de 10 años trayendo el sabor auténtico napolitano a Chipiona. Ingredientes frescos, recetas tradicionales y mucho amor.</p>
+        <br/>
+        <div class="social-links">
+          <a href="#" class="social-link" aria-label="Facebook" rel="noopener">
+            <i class="fab fa-facebook-f"></i>
+          </a>
+          <a href="#" class="social-link" aria-label="Instagram" rel="noopener">
+            <i class="fab fa-instagram"></i>
+          </a>
+          <a href="https://wa.me/34956000000" class="social-link" aria-label="WhatsApp" target="_blank" rel="noopener">
+            <i class="fab fa-whatsapp"></i>
+          </a>
+          <a href="#" class="social-link" aria-label="TikTok" rel="noopener">
+            <i class="fab fa-tiktok"></i>
+          </a>
+        </div>
+      </div>
+
+      <div class="footer-col">
+        <h4>Navegación</h4>
+        <ul>
+          <li><a href="#hero">Inicio</a></li>
+          <li><a href="#menu">Menú</a></li>
+          <li><a href="#offers">Ofertas</a></li>
+          <li><a href="#about">Nosotros</a></li>
+          <li><a href="#contact">Contacto</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Menú</h4>
+        <ul>
+          <li><a href="#panel-clasicas">Pizzas Clásicas</a></li>
+          <li><a href="#panel-especiales">Pizzas Especiales</a></li>
+          <li><a href="#panel-entrantes">Entrantes</a></li>
+          <li><a href="#panel-bebidas">Bebidas</a></li>
+          <li><a href="#panel-postres">Postres</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Información</h4>
+        <ul>
+          <li><a href="#contact">📍 Chipiona, Cádiz</a></li>
+          <li><a href="tel:956000000">📞 956 000 000</a></li>
+          <li><a href="#contact">🕐 12:00 – 23:30</a></li>
+          <li><a href="#contact">🛵 Reparto a domicilio</a></li>
+          <li><a href="#">Aviso Legal</a></li>
+          <li><a href="#">Política de Privacidad</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p>© 2026 Pizzería Nápoles — Chipiona. Todos los derechos reservados.</p>
+      <div class="footer-links">
+        <a href="#">Aviso Legal</a>
+        <a href="#">Política de Privacidad</a>
+        <a href="#">Cookies</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- ===== CART OVERLAY & PANEL ===== -->
+<div class="cart-overlay" id="cartOverlay" onclick="closeCart()"></div>
+
+<div class="cart-panel" id="cartPanel" role="dialog" aria-label="Carrito de la compra">
+  <div class="cart-header">
+    <h3>🛒 Tu Pedido</h3>
+    <button class="cart-close" onclick="closeCart()" aria-label="Cerrar carrito">✕</button>
+  </div>
+  <div class="cart-items" id="cartItems">
+    <div class="cart-empty">
+      <span class="cart-empty-icon">🛒</span>
+      <p>Tu carrito está vacío</p>
+      <small>¡Añade tus pizzas favoritas!</small>
+    </div>
+  </div>
+  <div class="cart-footer">
+    <div class="cart-total">
+      <span>Total:</span>
+      <span id="cartTotal">0,00€</span>
+    </div>
+    <button class="btn-checkout" onclick="checkout()">🍕 Finalizar Pedido</button>
+  </div>
+</div>
+
+<!-- ===== TOAST ===== -->
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="script.js"></script>
+</body>
+</html>
