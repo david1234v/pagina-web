@@ -58,25 +58,48 @@ function updateCartUI() {
         <small>¡Añade tus pizzas favoritas!</small>
       </div>`;
   } else {
-    itemsEl.innerHTML = cart.map(item => `
-      <div class="cart-item">
+    itemsEl.innerHTML = '';
+    cart.forEach((item, index) => {
+      const div = document.createElement('div');
+      div.className = 'cart-item';
+      div.innerHTML = `
         <span class="cart-item-emoji">${item.emoji}</span>
         <div class="cart-item-info">
-          <div class="name">${item.name}</div>
-          <div class="unit-price">${item.price.toFixed(2)}€ c/u</div>
+          <div class="name"></div>
+          <div class="unit-price"></div>
         </div>
         <div class="cart-item-qty">
-          <button class="qty-btn" onclick="changeQty('${item.name.replace(/'/g, "\\'")}', -1)">−</button>
+          <button class="qty-btn" data-action="dec" data-index="${index}">−</button>
           <span class="qty-num">${item.qty}</span>
-          <button class="qty-btn" onclick="changeQty('${item.name.replace(/'/g, "\\'")}', 1)">+</button>
+          <button class="qty-btn" data-action="inc" data-index="${index}">+</button>
         </div>
         <span class="cart-item-price">${(item.price * item.qty).toFixed(2)}€</span>
-        <button class="cart-remove" onclick="removeFromCart('${item.name.replace(/'/g, "\\'")}')">🗑</button>
-      </div>`).join('');
+        <button class="cart-remove" data-action="remove" data-index="${index}">🗑</button>`;
+      div.querySelector('.name').textContent = item.name;
+      div.querySelector('.unit-price').textContent = `${item.price.toFixed(2)}€ c/u`;
+      itemsEl.appendChild(div);
+    });
   }
 
   const totalEl = document.getElementById('cartTotal');
   if (totalEl) totalEl.textContent = getCartTotal().toFixed(2) + '€';
+}
+
+// ===== Cart Items Event Delegation =====
+function initCartEvents() {
+  const itemsEl = document.getElementById('cartItems');
+  if (!itemsEl) return;
+  itemsEl.addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-action]');
+    if (!btn) return;
+    const index = parseInt(btn.dataset.index, 10);
+    if (isNaN(index) || index < 0 || index >= cart.length) return;
+    const action = btn.dataset.action;
+    const name = cart[index].name;
+    if (action === 'inc') changeQty(name, 1);
+    else if (action === 'dec') changeQty(name, -1);
+    else if (action === 'remove') removeFromCart(name);
+  });
 }
 
 // ===== Cart Panel =====
@@ -271,6 +294,7 @@ function checkout() {
 // ===== Init =====
 document.addEventListener('DOMContentLoaded', () => {
   updateCartUI();
+  initCartEvents();
   initCountdown();
   initTabs();
   initSlider();
