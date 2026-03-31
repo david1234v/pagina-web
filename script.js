@@ -283,40 +283,29 @@ function initBirthdayForm() {
 // ===== Delivery Time =====
 const ADMIN_PASSWORD = 'napoles2026';
 
+function openAdminPanel() {
+  const pwd = prompt('Contraseña de administrador:');
+  if (pwd === ADMIN_PASSWORD) {
+    const panel = document.getElementById('adminPanel');
+    if (panel) panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+  } else if (pwd !== null) {
+    showToast('❌ Contraseña incorrecta');
+  }
+}
+
+function saveDeliverySettings() {
+  const time = document.getElementById('adminTimeInput')?.value || '30';
+  const status = document.getElementById('adminStatusInput')?.value || 'open';
+  localStorage.setItem('napoles-delivery-time', time);
+  localStorage.setItem('napoles-delivery-status', status);
+  loadDeliveryTime();
+  const panel = document.getElementById('adminPanel');
+  if (panel) panel.style.display = 'none';
+  showToast('✅ Configuración guardada');
+}
+
 function initDeliveryTime() {
   loadDeliveryTime();
-
-  // Admin panel toggle
-  document.getElementById('adminToggleBtn')?.addEventListener('click', () => {
-    const panel = document.getElementById('adminPanel');
-    if (panel.style.display === 'none' || panel.style.display === '') {
-      const pwd = prompt('🔐 Introduce la contraseña de administrador:');
-      if (pwd === ADMIN_PASSWORD) {
-        panel.style.display = 'block';
-        const current = localStorage.getItem('napoles-delivery-time') || '30';
-        document.getElementById('adminTimeInput').value = current;
-        document.getElementById('adminStatusInput').value = localStorage.getItem('napoles-delivery-status') || 'open';
-      } else if (pwd !== null) {
-        showToast('❌ Contraseña incorrecta');
-      }
-    } else {
-      panel.style.display = 'none';
-    }
-  });
-
-  document.getElementById('adminSaveBtn')?.addEventListener('click', () => {
-    const time = document.getElementById('adminTimeInput').value;
-    const status = document.getElementById('adminStatusInput').value;
-    if (!time || parseInt(time) < 1) {
-      showToast('⚠️ Introduce un tiempo válido');
-      return;
-    }
-    localStorage.setItem('napoles-delivery-time', time);
-    localStorage.setItem('napoles-delivery-status', status);
-    loadDeliveryTime();
-    document.getElementById('adminPanel').style.display = 'none';
-    showToast('✅ Tiempo de entrega actualizado');
-  });
 }
 
 function loadDeliveryTime() {
