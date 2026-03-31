@@ -55,7 +55,7 @@ function updateCartUI() {
       <div class="cart-empty">
         <span class="cart-empty-icon">🛒</span>
         <p>Tu carrito está vacío</p>
-        <small>¡Añade tus pizzas favoritas!</small>
+        <small>¡Añade tus platos favoritos!</small>
       </div>`;
   } else {
     itemsEl.innerHTML = '';
@@ -128,22 +128,18 @@ function showToast(msg) {
 // ===== Countdown Timer =====
 function initCountdown() {
   const now = new Date();
-  // Set end to midnight tonight
   const end = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 0);
 
   function tick() {
     const diff = end - new Date();
-    if (diff <= 0) {
-      setTime(0, 0, 0, 0);
-      return;
-    }
+    if (diff <= 0) { setTime(0, 0, 0); return; }
     const h = Math.floor(diff / 3600000);
     const m = Math.floor((diff % 3600000) / 60000);
     const s = Math.floor((diff % 60000) / 1000);
-    setTime(0, h, m, s);
+    setTime(h, m, s);
   }
 
-  function setTime(d, h, m, s) {
+  function setTime(h, m, s) {
     const pad = n => String(n).padStart(2, '0');
     const el = id => document.getElementById(id);
     if (el('cd-hours')) el('cd-hours').textContent = pad(h);
@@ -170,8 +166,16 @@ function initTabs() {
     });
   });
 
-  // Activate first tab
   if (tabs.length > 0) tabs[0].click();
+}
+
+// ===== Add to cart via data attributes =====
+function initAddBtns() {
+  document.querySelectorAll('.add-btn[data-name]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      addToCart(btn.dataset.name, parseFloat(btn.dataset.price), btn.dataset.emoji);
+    });
+  });
 }
 
 // ===== Testimonials Slider =====
@@ -188,21 +192,9 @@ function initSlider() {
     dots.forEach((d, i) => d.classList.toggle('active', i === current));
   }
 
-  document.getElementById('sliderPrev')?.addEventListener('click', () => {
-    clearTimeout(autoPlay);
-    goTo(current - 1);
-    startAuto();
-  });
-  document.getElementById('sliderNext')?.addEventListener('click', () => {
-    clearTimeout(autoPlay);
-    goTo(current + 1);
-    startAuto();
-  });
-  dots.forEach((dot, i) => dot.addEventListener('click', () => {
-    clearTimeout(autoPlay);
-    goTo(i);
-    startAuto();
-  }));
+  document.getElementById('sliderPrev')?.addEventListener('click', () => { clearTimeout(autoPlay); goTo(current - 1); startAuto(); });
+  document.getElementById('sliderNext')?.addEventListener('click', () => { clearTimeout(autoPlay); goTo(current + 1); startAuto(); });
+  dots.forEach((dot, i) => dot.addEventListener('click', () => { clearTimeout(autoPlay); goTo(i); startAuto(); }));
 
   function startAuto() {
     autoPlay = setTimeout(() => { goTo(current + 1); startAuto(); }, 5000);
@@ -230,7 +222,6 @@ function initMobileMenu() {
     mobileMenu?.classList.toggle('open');
   });
 
-  // Close on link click
   mobileMenu?.querySelectorAll('a').forEach(link => {
     link.addEventListener('click', () => {
       hamburger?.classList.remove('active');
@@ -265,7 +256,93 @@ function initContactForm() {
   });
 }
 
-// ===== Smooth Scroll for anchor links =====
+// ===== Birthday Reservation Form =====
+function initBirthdayForm() {
+  const form = document.getElementById('birthdayForm');
+  const success = document.getElementById('birthdaySuccess');
+  form?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const name = document.getElementById('bName').value.trim();
+    const date = document.getElementById('bDate').value;
+    const time = document.getElementById('bTime').value;
+    const people = document.getElementById('bPeople').value;
+    const notes = document.getElementById('bNotes').value.trim();
+
+    if (!name || !date || !time || !people) {
+      showToast('⚠️ Por favor rellena todos los campos obligatorios');
+      return;
+    }
+
+    console.log('Reserva cumpleaños:', { name, date, time, people, notes });
+    success.style.display = 'flex';
+    form.reset();
+    setTimeout(() => success.style.display = 'none', 6000);
+  });
+}
+
+// ===== Delivery Time =====
+const ADMIN_PASSWORD = 'napoles2026';
+
+function initDeliveryTime() {
+  loadDeliveryTime();
+
+  // Admin panel toggle
+  document.getElementById('adminToggleBtn')?.addEventListener('click', () => {
+    const panel = document.getElementById('adminPanel');
+    if (panel.style.display === 'none' || panel.style.display === '') {
+      const pwd = prompt('🔐 Introduce la contraseña de administrador:');
+      if (pwd === ADMIN_PASSWORD) {
+        panel.style.display = 'block';
+        const current = localStorage.getItem('napoles-delivery-time') || '30';
+        document.getElementById('adminTimeInput').value = current;
+        document.getElementById('adminStatusInput').value = localStorage.getItem('napoles-delivery-status') || 'open';
+      } else if (pwd !== null) {
+        showToast('❌ Contraseña incorrecta');
+      }
+    } else {
+      panel.style.display = 'none';
+    }
+  });
+
+  document.getElementById('adminSaveBtn')?.addEventListener('click', () => {
+    const time = document.getElementById('adminTimeInput').value;
+    const status = document.getElementById('adminStatusInput').value;
+    if (!time || parseInt(time) < 1) {
+      showToast('⚠️ Introduce un tiempo válido');
+      return;
+    }
+    localStorage.setItem('napoles-delivery-time', time);
+    localStorage.setItem('napoles-delivery-status', status);
+    loadDeliveryTime();
+    document.getElementById('adminPanel').style.display = 'none';
+    showToast('✅ Tiempo de entrega actualizado');
+  });
+}
+
+function loadDeliveryTime() {
+  const time = localStorage.getItem('napoles-delivery-time') || '30';
+  const status = localStorage.getItem('napoles-delivery-status') || 'open';
+
+  const displayEl = document.getElementById('deliveryTimeDisplay');
+  const badgeEl = document.getElementById('deliveryStatusBadge');
+
+  if (displayEl) displayEl.textContent = time + ' min';
+
+  if (badgeEl) {
+    if (status === 'open') {
+      badgeEl.textContent = '🟢 Abierto — Pedidos activos';
+      badgeEl.className = 'delivery-badge open';
+    } else if (status === 'busy') {
+      badgeEl.textContent = '🟡 Mucha demanda — Tiempo estimado puede variar';
+      badgeEl.className = 'delivery-badge busy';
+    } else {
+      badgeEl.textContent = '🔴 Cerrado — No aceptamos pedidos ahora';
+      badgeEl.className = 'delivery-badge closed';
+    }
+  }
+}
+
+// ===== Smooth Scroll =====
 function initSmoothScroll() {
   document.querySelectorAll('a[href^="#"]').forEach(a => {
     a.addEventListener('click', (e) => {
@@ -284,7 +361,13 @@ function checkout() {
     showToast('⚠️ Tu carrito está vacío');
     return;
   }
-  alert(`¡Pedido recibido! 🍕\nTotal: ${getCartTotal().toFixed(2)}€\n\nTe llamaremos al número que nos facilites.\n¡Gracias por elegir Pizzería Nápoles!`);
+  const status = localStorage.getItem('napoles-delivery-status') || 'open';
+  if (status === 'closed') {
+    showToast('🔴 Lo sentimos, ahora mismo estamos cerrados');
+    return;
+  }
+  const time = localStorage.getItem('napoles-delivery-time') || '30';
+  alert(`¡Pedido recibido! 🍔\nTotal: ${getCartTotal().toFixed(2)}€\n\nTiempo estimado de entrega: ~${time} minutos\n\nTe llamaremos para confirmar.\n¡Gracias por elegir Nápoles Chipiona!`);
   cart = [];
   saveCart();
   updateCartUI();
@@ -297,10 +380,13 @@ document.addEventListener('DOMContentLoaded', () => {
   initCartEvents();
   initCountdown();
   initTabs();
+  initAddBtns();
   initSlider();
   initHeader();
   initMobileMenu();
   initReveal();
   initContactForm();
+  initBirthdayForm();
+  initDeliveryTime();
   initSmoothScroll();
 });
