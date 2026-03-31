@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Pizzería Nápoles de Chipiona — La mejor pizza de Chipiona. Ingredientes frescos, sabor napolitano auténtico. Pedidos a domicilio." />
-  <title>Pizzería Nápoles — Chipiona</title>
+  <meta name="description" content="Nápoles Chipiona — Fritos, Sandwiches, Perritos, Burguers, Baguettes, Tex-Mex, Ensaladas y más. Pedidos a domicilio en Chipiona." />
+  <title>Nápoles — Chipiona</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
@@ -17,10 +17,10 @@
 <header id="header">
   <div class="container">
     <nav class="nav-container">
-      <a href="#hero" class="nav-logo" aria-label="Pizzería Nápoles inicio">
-        <span class="logo-icon">🍕</span>
+      <a href="#hero" class="nav-logo" aria-label="Nápoles Chipiona inicio">
+        <span class="logo-icon">🍔</span>
         <div class="logo-text">
-          <span class="logo-name">Pizzería Nápoles</span>
+          <span class="logo-name">Nápoles</span>
           <span class="logo-sub">Chipiona</span>
         </div>
       </a>
@@ -49,7 +49,7 @@
   <!-- Mobile Menu -->
   <div class="mobile-menu" id="mobileMenu">
     <a href="#hero">🏠 Inicio</a>
-    <a href="#menu">🍕 Menú</a>
+    <a href="#menu">🍔 Menú</a>
     <a href="#offers">🏷️ Ofertas</a>
     <a href="#about">❤️ Nosotros</a>
     <a href="#contact">📞 Contacto</a>
@@ -64,13 +64,13 @@
         🏆 Más de 10 años deleitando Chipiona
       </div>
       <h1 class="hero-title">
-        La mejor pizza<br><span>de Chipiona</span>
+        Lo mejor de Chipiona<br><span>en un solo sitio</span>
       </h1>
       <p class="hero-subtitle">
-        Ingredientes frescos, sabor napolitano auténtico. Horno de leña y recetas tradicionales de Nápoles.
+        Burguers, sandwiches, baguettes, tex-mex, ensaladas y mucho más. Ingredientes frescos y sabor casero.
       </p>
       <div class="hero-actions">
-        <a href="#menu" class="btn btn-secondary">🍕 Ver Menú</a>
+        <a href="#menu" class="btn btn-secondary">🍔 Ver Menú</a>
         <a href="#offers" class="btn btn-outline">🏷️ Ver Ofertas</a>
       </div>
     </div>
@@ -87,10 +87,10 @@
     <div class="offers-grid">
       <div class="offer-card reveal">
         <span class="offer-tag">HOT</span>
-        <div class="offer-icon">🍕🍕</div>
+        <div class="offer-icon">🍔🍔</div>
         <h3>2×1 los Martes</h3>
-        <p>Dos pizzas al precio de una. Válido todos los martes durante todo el día.</p>
-        <div class="offer-price">¡GRATIS! <span>segunda pizza</span></div>
+        <p>Dos burguers al precio de una. Válido todos los martes durante todo el día.</p>
+        <div class="offer-price">¡GRATIS! <span>segunda burguer</span></div>
         <br/>
         <button class="btn btn-primary" onclick="document.getElementById('menu').scrollIntoView({behavior:'smooth'})">Aprovechar oferta</button>
       </div>
@@ -99,7 +99,7 @@
         <span class="offer-tag">FAM</span>
         <div class="offer-icon">👨‍👩‍👧‍👦</div>
         <h3>Menú Familiar</h3>
-        <p>2 pizzas grandes + 4 bebidas + palitos de pan. ¡Perfecto para toda la familia!</p>
+        <p>2 burguers + patatas + 4 bebidas. ¡Perfecto para toda la familia!</p>
         <div class="offer-price">19,99€ <span>antes 28€</span></div>
         <br/>
         <button class="btn btn-primary" onclick="document.getElementById('menu').scrollIntoView({behavior:'smooth'})">Pedir menú familiar</button>
@@ -107,9 +107,9 @@
 
       <div class="offer-card reveal">
         <span class="offer-tag">DEAL</span>
-        <div class="offer-icon">🍕🥤🍮</div>
-        <h3>Pizza + Bebida + Postre</h3>
-        <p>Pizza mediana a elegir, bebida 33cl y postre casero. ¡El combo perfecto!</p>
+        <div class="offer-icon">🥪🥤🍟</div>
+        <h3>Sandwich + Bebida + Patatas</h3>
+        <p>Sandwich a elegir, bebida 33cl y patatas. ¡El combo perfecto!</p>
         <div class="offer-price">12,99€ <span>antes 18€</span></div>
         <br/>
         <button class="btn btn-primary" onclick="document.getElementById('menu').scrollIntoView({behavior:'smooth'})">Pedir combo</button>
@@ -119,7 +119,7 @@
     <!-- Countdown -->
     <div class="countdown-section reveal">
       <h3>⚡ Oferta Flash del Día</h3>
-      <p>¡Descuento del 20% en todas las pizzas especiales! Termina hoy a medianoche.</p>
+      <p>¡Descuento del 20% en todos los menús! Termina hoy a medianoche.</p>
       <div class="countdown-timer">
         <div class="countdown-item">
           <span class="num" id="cd-hours">00</span>
@@ -141,281 +141,149 @@
 <!-- ===== MENU ===== -->
 <section id="menu">
   <div class="container">
-    <h2 class="section-title reveal">🍕 Nuestro Menú</h2>
-    <p class="section-subtitle reveal">Ingredientes frescos del mercado local, masa artesanal y hornos tradicionales</p>
+    <h2 class="section-title reveal">🍔 Nuestro Menú</h2>
+    <p class="section-subtitle reveal">Ingredientes frescos, sabor casero y todo hecho con cariño</p>
 
     <div class="menu-tabs reveal">
-      <button class="tab-btn" data-target="panel-clasicas">🍕 Clásicas</button>
-      <button class="tab-btn" data-target="panel-especiales">⭐ Especiales</button>
-      <button class="tab-btn" data-target="panel-entrantes">🧄 Entrantes</button>
-      <button class="tab-btn" data-target="panel-bebidas">🥤 Bebidas</button>
-      <button class="tab-btn" data-target="panel-postres">🍮 Postres</button>
+      <button class="tab-btn" data-target="panel-fritos">🍟 Fritos</button>
+      <button class="tab-btn" data-target="panel-sandwiches">🥪 Sandwiches</button>
+      <button class="tab-btn" data-target="panel-perritos">🌭 Perritos</button>
+      <button class="tab-btn" data-target="panel-pasta">🍝 Pasta</button>
+      <button class="tab-btn" data-target="panel-burguers">🍔 Burguers</button>
+      <button class="tab-btn" data-target="panel-baguettes">🥖 Baguettes</button>
+      <button class="tab-btn" data-target="panel-texmex">🌮 Tex-Mex</button>
+      <button class="tab-btn" data-target="panel-ensaladas">🥗 Ensaladas</button>
+      <button class="tab-btn" data-target="panel-filetes">🥩 Filetes</button>
     </div>
 
-    <!-- Pizzas Clásicas -->
-    <div class="menu-panel" id="panel-clasicas">
+    <!-- FRITOS -->
+    <div class="menu-panel" id="panel-fritos">
       <div class="menu-grid">
-        <div class="menu-card reveal">
-          <div class="menu-card-img">🍕</div>
-          <div class="menu-card-body">
-            <h4>Margarita</h4>
-            <p>Tomate, mozzarella fresca, albahaca. La clásica de siempre.</p>
-            <div class="menu-card-footer">
-              <span class="menu-price">8,99€</span>
-              <button class="add-btn" onclick="addToCart('Margarita', 8.99, '🍕')">+ Añadir</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="menu-card reveal">
-          <div class="menu-card-img">🧀</div>
-          <div class="menu-card-body">
-            <h4>Cuatro Quesos</h4>
-            <p>Mozzarella, gouda, parmesano y roquefort. Para los amantes del queso.</p>
-            <div class="menu-card-footer">
-              <span class="menu-price">10,99€</span>
-              <button class="add-btn" onclick="addToCart('Cuatro Quesos', 10.99, '🧀')">+ Añadir</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="menu-card reveal">
-          <div class="menu-card-img">🍗</div>
-          <div class="menu-card-body">
-            <h4>Barbacoa</h4>
-            <p>Pollo a la parrilla, bacon crujiente, salsa BBQ y cebolla caramelizada.</p>
-            <div class="menu-card-footer">
-              <span class="menu-price">11,99€</span>
-              <button class="add-btn" onclick="addToCart('Barbacoa', 11.99, '🍗')">+ Añadir</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="menu-card reveal">
-          <div class="menu-card-img">🌶️</div>
-          <div class="menu-card-body">
-            <h4>Pepperoni</h4>
-            <p>Tomate, mozzarella y generosa cantidad de pepperoni artesanal.</p>
-            <div class="menu-card-footer">
-              <span class="menu-price">10,99€</span>
-              <button class="add-btn" onclick="addToCart('Pepperoni', 10.99, '🌶️')">+ Añadir</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="menu-card reveal">
-          <div class="menu-card-img">🥦</div>
-          <div class="menu-card-body">
-            <h4>Vegetal</h4>
-            <p>Pimientos, champiñones, cebolla, aceitunas y tomate cherry. 100% vegetal.</p>
-            <div class="menu-card-footer">
-              <span class="menu-price">9,99€</span>
-              <button class="add-btn" onclick="addToCart('Vegetal', 9.99, '🥦')">+ Añadir</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="menu-card reveal">
-          <div class="menu-card-img">🥩</div>
-          <div class="menu-card-body">
-            <h4>Jamón y Queso</h4>
-            <p>Jamón cocido de primera calidad, mozzarella fundida y salsa de tomate.</p>
-            <div class="menu-card-footer">
-              <span class="menu-price">9,99€</span>
-              <button class="add-btn" onclick="addToCart('Jamón y Queso', 9.99, '🥩')">+ Añadir</button>
-            </div>
-          </div>
-        </div>
+        <div class="menu-card reveal"><div class="menu-card-img">🍟</div><div class="menu-card-body"><h4>Patatas</h4><p>Patatas fritas crujientes.</p><div class="menu-card-footer"><span class="menu-price">3,80€</span><button class="add-btn" data-name="Patatas" data-price="3.80" data-emoji="🍟">+ Añadir</button></div></div></div>
+        <div class="menu-card reveal"><div class="menu-card-img">🧀</div><div class="menu-card-body"><h4>Patatas + Queso</h4><p>Patatas fritas con queso fundido.</p><div class="menu-card-footer"><span class="menu-price">4,80€</span><button class="add-btn" data-name="Patatas + Queso" data-price="4.80" data-emoji="🧀">+ Añadir</button></div></div></div>
+        <div class="menu-card reveal"><div class="menu-card-img">🥛</div><div class="menu-card-body"><h4>Patatas + Yogurt</h4><p>Patatas fritas con salsa de yogurt.</p><div class="menu-card-footer"><span class="menu-price">4,80€</span><button class="add-btn" data-name="Patatas + Yogurt" data-price="4.80" data-emoji="🥛">+ Añadir</button></div></div></div>
+        <div class="menu-card reveal"><div class="menu-card-img">🌮</div><div class="menu-card-body"><h4>Patatas + Taco + Queso</h4><p>Patatas con carne de taco y queso.</p><div class="menu-card-footer"><span class="menu-price">5,30€</span><button class="add-btn" data-name="Patatas + Taco + Queso" data-price="5.30" data-emoji="🌮">+ Añadir</button></div></div></div>
+        <div class="menu-card reveal"><div class="menu-card-img">🥓</div><div class="menu-card-body"><h4>Patatas + Bacon + Queso</h4><p>Patatas con bacon crujiente y queso.</p><div class="menu-card-footer"><span class="menu-price">5,30€</span><button class="add-btn" data-name="Patatas + Bacon + Queso" data-price="5.30" data-emoji="🥓">+ Añadir</button></div></div></div>
+        <div class="menu-card reveal"><div class="menu-card-img">🍟</div><div class="menu-card-body"><h4>Patatas Salvajes</h4><p>Patatas gajo especiadas y crujientes.</p><div class="menu-card-footer"><span class="menu-price">4,30€</span><button class="add-btn" data-name="Patatas Salvajes" data-price="4.30" data-emoji="🍟">+ Añadir</button></div></div></div>
+        <div class="menu-card reveal"><div class="menu-card-img">🧀</div><div class="menu-card-body"><h4>Pat. Salvajes + Queso</h4><p>Patatas salvajes con queso fundido.</p><div class="menu-card-footer"><span class="menu-price">5,30€</span><button class="add-btn" data-name="Pat. Salvajes + Queso" data-price="5.30" data-emoji="🧀">+ Añadir</button></div></div></div>
+        <div class="menu-card reveal"><div class="menu-card-img">🌮</div><div class="menu-card-body"><h4>Pat. Salvajes + Taco + Queso</h4><p>Patatas salvajes con taco y queso.</p><div class="menu-card-footer"><span class="menu-price">6,30€</span><button class="add-btn" data-name="Pat. Salvajes + Taco + Queso" data-price="6.30" data-emoji="🌮">+ Añadir</button></div></div></div>
+        <div class="menu-card reveal"><div class="menu-card-img">🥓</div><div class="menu-card-body"><h4>Pat. Salvajes + Bacon + Queso</h4><p>Patatas salvajes con bacon y queso.</p><div class="menu-card-footer"><span class="menu-price">6,30€</span><button class="add-btn" data-name="Pat. Salvajes + Bacon + Queso" data-price="6.30" data-emoji="🥓">+ Añadir</button></div></div></div>
       </div>
     </div>
 
-    <!-- Pizzas Especiales -->
-    <div class="menu-panel" id="panel-especiales">
+    <!-- SANDWICHES -->
+    <div class="menu-panel" id="panel-sandwiches">
+      <p class="panel-note">+ Patatas 1,70€</p>
       <div class="menu-grid">
-        <div class="menu-card reveal">
-          <div class="menu-card-img">⭐</div>
-          <div class="menu-card-body">
-            <h4>Nápoles Especial</h4>
-            <p>La receta secreta de la casa. Ingredientes seleccionados con el toque napolitano auténtico.</p>
-            <div class="menu-card-footer">
-              <span class="menu-price">13,99€</span>
-              <button class="add-btn" onclick="addToCart('Nápoles Especial', 13.99, '⭐')">+ Añadir</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="menu-card reveal">
-          <div class="menu-card-img">🦐</div>
-          <div class="menu-card-body">
-            <h4>Mar y Tierra</h4>
-            <p>Gambas al ajillo, pollo asado, pimientos y tomate. El surf &amp; turf en pizza.</p>
-            <div class="menu-card-footer">
-              <span class="menu-price">12,99€</span>
-              <button class="add-btn" onclick="addToCart('Mar y Tierra', 12.99, '🦐')">+ Añadir</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="menu-card reveal">
-          <div class="menu-card-img">🍄</div>
-          <div class="menu-card-body">
-            <h4>Trufa Negra</h4>
-            <p>Crema de trufa negra, mozzarella di bufala y rúcula fresca. Alta cocina en pizza.</p>
-            <div class="menu-card-footer">
-              <span class="menu-price">14,99€</span>
-              <button class="add-btn" onclick="addToCart('Trufa Negra', 14.99, '🍄')">+ Añadir</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="menu-card reveal">
-          <div class="menu-card-img">🔥</div>
-          <div class="menu-card-body">
-            <h4>Diavola Picante</h4>
-            <p>Salami picante, jalapeños frescos y nduja calabresa. ¡Para los valientes!</p>
-            <div class="menu-card-footer">
-              <span class="menu-price">11,99€</span>
-              <button class="add-btn" onclick="addToCart('Diavola Picante', 11.99, '🔥')">+ Añadir</button>
-            </div>
-          </div>
-        </div>
+        <div class="menu-card reveal"><div class="menu-card-img">🥪</div><div class="menu-card-body"><h4>Mixto</h4><p>Jamón york y queso.</p><div class="menu-card-footer"><span class="menu-price">2,70€</span><button class="add-btn" data-name="Sandwich Mixto" data-price="2.70" data-emoji="🥪">+ Añadir</button></div></div></div>
+        <div class="menu-card reveal"><div class="menu-card-img">🍗</div><div class="menu-card-body"><h4>Pollo</h4><p>Pollo, tomate, lechuga y mahonesa.</p><div class="menu-card-footer"><span class="menu-price">3,20€</span><button class="add-btn" data-name="Sandwich Pollo" data-price="3.20" data-emoji="🍗">+ Añadir</button></div></div></div>
+        <div class="menu-card reveal"><div class="menu-card-img">🥦</div><div class="menu-card-body"><h4>Vegetal</h4><p>Atún, tomate, lechuga y mahonesa.</p><div class="menu-card-footer"><span class="menu-price">3,20€</span><button class="add-btn" data-name="Sandwich Vegetal" data-price="3.20" data-emoji="🥦">+ Añadir</button></div></div></div>
+        <div class="menu-card reveal"><div class="menu-card-img">🥚</div><div class="menu-card-body"><h4>Completo</h4><p>Queso, huevo, jamón york y bacon.</p><div class="menu-card-footer"><span class="menu-price">3,60€</span><button class="add-btn" data-name="Sandwich Completo" data-price="3.60" data-emoji="🥚">+ Añadir</button></div></div></div>
+        <div class="menu-card reveal"><div class="menu-card-img">🌮</div><div class="menu-card-body"><h4>Taco</h4><p>Carne de taco, queso, lechuga y mahonesa.</p><div class="menu-card-footer"><span class="menu-price">3,20€</span><button class="add-btn" data-name="Sandwich Taco" data-price="3.20" data-emoji="🌮">+ Añadir</button></div></div></div>
+        <div class="menu-card reveal"><div class="menu-card-img">🧄</div><div class="menu-card-body"><h4>Pollo Ali-Oli</h4><p>Pollo, lechuga y salsa ali-oli.</p><div class="menu-card-footer"><span class="menu-price">3,20€</span><button class="add-btn" data-name="Sandwich Pollo Ali-Oli" data-price="3.20" data-emoji="🧄">+ Añadir</button></div></div></div>
+        <div class="menu-card reveal"><div class="menu-card-img">🥪</div><div class="menu-card-body"><h4>Monstruito 2</h4><p>Sandwich completo + sandwich de pollo.</p><div class="menu-card-footer"><span class="menu-price">4,80€</span><button class="add-btn" data-name="Monstruito 2" data-price="4.80" data-emoji="🥪">+ Añadir</button></div></div></div>
+        <div class="menu-card reveal"><div class="menu-card-img">🥪</div><div class="menu-card-body"><h4>Monstruito 3</h4><p>Sandwich completo + sandwich vegetal.</p><div class="menu-card-footer"><span class="menu-price">4,80€</span><button class="add-btn" data-name="Monstruito 3" data-price="4.80" data-emoji="🥪">+ Añadir</button></div></div></div>
+        <div class="menu-card reveal"><div class="menu-card-img">🥪</div><div class="menu-card-body"><h4>Monstruito 4</h4><p>Sandwich completo + sandwich de taco.</p><div class="menu-card-footer"><span class="menu-price">4,80€</span><button class="add-btn" data-name="Monstruito 4" data-price="4.80" data-emoji="🥪">+ Añadir</button></div></div></div>
       </div>
     </div>
 
-    <!-- Entrantes -->
-    <div class="menu-panel" id="panel-entrantes">
+    <!-- PERRITOS -->
+    <div class="menu-panel" id="panel-perritos">
+      <p class="panel-note">+ Patatas 1,70€</p>
       <div class="menu-grid">
-        <div class="menu-card reveal">
-          <div class="menu-card-img">🥖</div>
-          <div class="menu-card-body">
-            <h4>Palitos de Pan con Ajo</h4>
-            <p>Palitos de masa artesanal con mantequilla de ajo y hierbas provenzales.</p>
-            <div class="menu-card-footer">
-              <span class="menu-price">3,99€</span>
-              <button class="add-btn" onclick="addToCart('Palitos de Pan con Ajo', 3.99, '🥖')">+ Añadir</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="menu-card reveal">
-          <div class="menu-card-img">🍗</div>
-          <div class="menu-card-body">
-            <h4>Alitas BBQ (8 uds)</h4>
-            <p>Alitas de pollo marinadas y asadas con salsa barbacoa casera. ¡Irresistibles!</p>
-            <div class="menu-card-footer">
-              <span class="menu-price">6,99€</span>
-              <button class="add-btn" onclick="addToCart('Alitas BBQ', 6.99, '🍗')">+ Añadir</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="menu-card reveal">
-          <div class="menu-card-img">🥔</div>
-          <div class="menu-card-body">
-            <h4>Patatas Bravas</h4>
-            <p>Patatas crujientes con salsa brava picante y alioli casero. Sabor español.</p>
-            <div class="menu-card-footer">
-              <span class="menu-price">4,99€</span>
-              <button class="add-btn" onclick="addToCart('Patatas Bravas', 4.99, '🥔')">+ Añadir</button>
-            </div>
-          </div>
-        </div>
+        <div class="menu-card reveal"><div class="menu-card-img">🌭</div><div class="menu-card-body"><h4>Simple</h4><p>Salchicha, tomate y lechuga.</p><div class="menu-card-footer"><span class="menu-price">2,80€</span><button class="add-btn" data-name="Perrito Simple" data-price="2.80" data-emoji="🌭">+ Añadir</button></div></div></div>
+        <div class="menu-card reveal"><div class="menu-card-img">🌭</div><div class="menu-card-body"><h4>Completo</h4><p>Salchicha, queso, bacon, tomate y lechuga.</p><div class="menu-card-footer"><span class="menu-price">3,50€</span><button class="add-btn" data-name="Perrito Completo" data-price="3.50" data-emoji="🌭">+ Añadir</button></div></div></div>
+        <div class="menu-card reveal"><div class="menu-card-img">🌮</div><div class="menu-card-body"><h4>Taco</h4><p>Salchicha, queso, carne de taco y lechuga.</p><div class="menu-card-footer"><span class="menu-price">3,50€</span><button class="add-btn" data-name="Perrito Taco" data-price="3.50" data-emoji="🌮">+ Añadir</button></div></div></div>
+        <div class="menu-card reveal"><div class="menu-card-img">🥓</div><div class="menu-card-body"><h4>Completo de Taco</h4><p>Salchicha, queso, carne de taco, bacon y lechuga.</p><div class="menu-card-footer"><span class="menu-price">4,00€</span><button class="add-btn" data-name="Perrito Completo de Taco" data-price="4.00" data-emoji="🥓">+ Añadir</button></div></div></div>
+        <div class="menu-card reveal"><div class="menu-card-img">🥚</div><div class="menu-card-body"><h4>Completo de Huevo</h4><p>Salchicha, queso, bacon, huevo y lechuga.</p><div class="menu-card-footer"><span class="menu-price">4,00€</span><button class="add-btn" data-name="Perrito Completo de Huevo" data-price="4.00" data-emoji="🥚">+ Añadir</button></div></div></div>
+        <div class="menu-card reveal"><div class="menu-card-img">🌭</div><div class="menu-card-body"><h4>Nápoles</h4><p>Salchicha, carne de taco, queso, salsa de tomate y cebolla crujiente.</p><div class="menu-card-footer"><span class="menu-price">4,00€</span><button class="add-btn" data-name="Perrito Nápoles" data-price="4.00" data-emoji="🌭">+ Añadir</button></div></div></div>
       </div>
     </div>
 
-    <!-- Bebidas -->
-    <div class="menu-panel" id="panel-bebidas">
+    <!-- PASTA -->
+    <div class="menu-panel" id="panel-pasta">
       <div class="menu-grid">
-        <div class="menu-card reveal">
-          <div class="menu-card-img">🥤</div>
-          <div class="menu-card-body">
-            <h4>Coca-Cola 33cl</h4>
-            <p>Refresco Coca-Cola bien frío. También disponible sin azúcar.</p>
-            <div class="menu-card-footer">
-              <span class="menu-price">1,99€</span>
-              <button class="add-btn" onclick="addToCart('Coca-Cola 33cl', 1.99, '🥤')">+ Añadir</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="menu-card reveal">
-          <div class="menu-card-img">💧</div>
-          <div class="menu-card-body">
-            <h4>Agua 50cl</h4>
-            <p>Agua mineral natural o con gas. Refresco puro y natural.</p>
-            <div class="menu-card-footer">
-              <span class="menu-price">1,49€</span>
-              <button class="add-btn" onclick="addToCart('Agua 50cl', 1.49, '💧')">+ Añadir</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="menu-card reveal">
-          <div class="menu-card-img">🍺</div>
-          <div class="menu-card-body">
-            <h4>Cerveza Cruzcampo</h4>
-            <p>La cerveza gaditana por excelencia. Bien fría y espumosa.</p>
-            <div class="menu-card-footer">
-              <span class="menu-price">2,49€</span>
-              <button class="add-btn" onclick="addToCart('Cerveza Cruzcampo', 2.49, '🍺')">+ Añadir</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="menu-card reveal">
-          <div class="menu-card-img">🍷</div>
-          <div class="menu-card-body">
-            <h4>Sangría 1L</h4>
-            <p>Sangría artesanal con vino tinto, frutas de temporada y especias. Perfecta en verano.</p>
-            <div class="menu-card-footer">
-              <span class="menu-price">7,99€</span>
-              <button class="add-btn" onclick="addToCart('Sangría 1L', 7.99, '🍷')">+ Añadir</button>
-            </div>
-          </div>
-        </div>
+        <div class="menu-card reveal"><div class="menu-card-img">🍝</div><div class="menu-card-body"><h4>Lasaña</h4><p>Lasaña casera con carne y bechamel.</p><div class="menu-card-footer"><span class="menu-price">6,00€</span><button class="add-btn" data-name="Lasaña" data-price="6.00" data-emoji="🍝">+ Añadir</button></div></div></div>
+        <div class="menu-card reveal"><div class="menu-card-img">🍝</div><div class="menu-card-body"><h4>Espaguetis Boloñesa</h4><p>Espaguetis con salsa boloñesa casera.</p><div class="menu-card-footer"><span class="menu-price">5,00€</span><button class="add-btn" data-name="Espaguetis Boloñesa" data-price="5.00" data-emoji="🍝">+ Añadir</button></div></div></div>
+        <div class="menu-card reveal"><div class="menu-card-img">🍝</div><div class="menu-card-body"><h4>Espaguetis Carbonara</h4><p>Espaguetis con salsa carbonara cremosa.</p><div class="menu-card-footer"><span class="menu-price">5,00€</span><button class="add-btn" data-name="Espaguetis Carbonara" data-price="5.00" data-emoji="🍝">+ Añadir</button></div></div></div>
       </div>
     </div>
 
-    <!-- Postres -->
-    <div class="menu-panel" id="panel-postres">
+    <!-- BURGUERS -->
+    <div class="menu-panel" id="panel-burguers">
+      <p class="panel-note">+ Patatas 1,70€</p>
       <div class="menu-grid">
-        <div class="menu-card reveal">
-          <div class="menu-card-img">🍮</div>
-          <div class="menu-card-body">
-            <h4>Tiramisú Casero</h4>
-            <p>Receta tradicional italiana con bizcochos savoiardi, mascarpone y café. Hecho en casa.</p>
-            <div class="menu-card-footer">
-              <span class="menu-price">4,99€</span>
-              <button class="add-btn" onclick="addToCart('Tiramisú Casero', 4.99, '🍮')">+ Añadir</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="menu-card reveal">
-          <div class="menu-card-img">🍫</div>
-          <div class="menu-card-body">
-            <h4>Coulant de Chocolate</h4>
-            <p>Bizcocho de chocolate caliente con corazón líquido. Servido con bola de helado.</p>
-            <div class="menu-card-footer">
-              <span class="menu-price">4,49€</span>
-              <button class="add-btn" onclick="addToCart('Coulant de Chocolate', 4.49, '🍫')">+ Añadir</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="menu-card reveal">
-          <div class="menu-card-img">🍦</div>
-          <div class="menu-card-body">
-            <h4>Helado (3 bolas)</h4>
-            <p>Selección de sabores: vainilla, chocolate, fresa o pistacho. Cremoso y delicioso.</p>
-            <div class="menu-card-footer">
-              <span class="menu-price">3,99€</span>
-              <button class="add-btn" onclick="addToCart('Helado 3 bolas', 3.99, '🍦')">+ Añadir</button>
-            </div>
-          </div>
-        </div>
+        <div class="menu-card reveal"><div class="menu-card-img">🍔</div><div class="menu-card-body"><h4>Simple</h4><p>Ternera, lechuga, tomate y cebolla.</p><div class="menu-card-footer"><span class="menu-price">3,00€</span><button class="add-btn" data-name="Burguer Simple" data-price="3.00" data-emoji="🍔">+ Añadir</button></div></div></div>
+        <div class="menu-card reveal"><div class="menu-card-img">🍔</div><div class="menu-card-body"><h4>Mixta 1</h4><p>Ternera, queso, huevo y verdura.</p><div class="menu-card-footer"><span class="menu-price">4,00€</span><button class="add-btn" data-name="Burguer Mixta 1" data-price="4.00" data-emoji="🍔">+ Añadir</button></div></div></div>
+        <div class="menu-card reveal"><div class="menu-card-img">🍔</div><div class="menu-card-body"><h4>Mixta 2</h4><p>Ternera, queso, bacon y verdura.</p><div class="menu-card-footer"><span class="menu-price">4,00€</span><button class="add-btn" data-name="Burguer Mixta 2" data-price="4.00" data-emoji="🍔">+ Añadir</button></div></div></div>
+        <div class="menu-card reveal"><div class="menu-card-img">🍔</div><div class="menu-card-body"><h4>Mixta 3</h4><p>Ternera, bacon, huevo y verdura.</p><div class="menu-card-footer"><span class="menu-price">4,00€</span><button class="add-btn" data-name="Burguer Mixta 3" data-price="4.00" data-emoji="🍔">+ Añadir</button></div></div></div>
+        <div class="menu-card reveal"><div class="menu-card-img">🍔</div><div class="menu-card-body"><h4>Completa</h4><p>Ternera, queso, bacon, huevo y verduras.</p><div class="menu-card-footer"><span class="menu-price">4,50€</span><button class="add-btn" data-name="Burguer Completa" data-price="4.50" data-emoji="🍔">+ Añadir</button></div></div></div>
+        <div class="menu-card reveal"><div class="menu-card-img">🍔</div><div class="menu-card-body"><h4>Doble</h4><p>Doble carne de ternera, doble queso cheddar, bacon crujiente, cebolla crujiente y salsa.</p><div class="menu-card-footer"><span class="menu-price">5,00€</span><button class="add-btn" data-name="Burguer Doble" data-price="5.00" data-emoji="🍔">+ Añadir</button></div></div></div>
+        <div class="menu-card reveal"><div class="menu-card-img">🍔</div><div class="menu-card-body"><h4>May</h4><p>Doble carne de ternera, queso cheddar, bacon crujiente, pepinillos, lechuga y mostaza.</p><div class="menu-card-footer"><span class="menu-price">5,00€</span><button class="add-btn" data-name="Burguer May" data-price="5.00" data-emoji="🍔">+ Añadir</button></div></div></div>
+        <div class="menu-card reveal"><div class="menu-card-img">🍔</div><div class="menu-card-body"><h4>Krasty</h4><p>Ternera, queso cheddar, pepinillos, lechuga y salsa.</p><div class="menu-card-footer"><span class="menu-price">4,30€</span><button class="add-btn" data-name="Burguer Krasty" data-price="4.30" data-emoji="🍔">+ Añadir</button></div></div></div>
+        <div class="menu-card reveal"><div class="menu-card-img">🍔</div><div class="menu-card-body"><h4>Barbacoa</h4><p>Ternera, bacon crujiente, salsa BBQ, cebolla crujiente y lechuga.</p><div class="menu-card-footer"><span class="menu-price">4,30€</span><button class="add-btn" data-name="Burguer Barbacoa" data-price="4.30" data-emoji="🍔">+ Añadir</button></div></div></div>
+        <div class="menu-card reveal"><div class="menu-card-img">🧀</div><div class="menu-card-body"><h4>Rulo Ternera</h4><p>Ternera, rulo de cabra, cánónigos, cebolla caramelizada, bacon, tomate y mahonesa.</p><div class="menu-card-footer"><span class="menu-price">5,30€</span><button class="add-btn" data-name="Rulo Ternera" data-price="5.30" data-emoji="🧀">+ Añadir</button></div></div></div>
+        <div class="menu-card reveal"><div class="menu-card-img">🍗</div><div class="menu-card-body"><h4>Chicken Rulo</h4><p>Pollo rebozado, rulo de cabra, cánónigos, cebolla caramelizada, tomate y mahonesa.</p><div class="menu-card-footer"><span class="menu-price">5,30€</span><button class="add-btn" data-name="Chicken Rulo" data-price="5.30" data-emoji="🍗">+ Añadir</button></div></div></div>
+        <div class="menu-card reveal"><div class="menu-card-img">🍔</div><div class="menu-card-body"><h4>Gourmet</h4><p>Ternera, mermelada de tomate, rulo de cabra, cebolla crujiente y cánónigos.</p><div class="menu-card-footer"><span class="menu-price">4,30€</span><button class="add-btn" data-name="Burguer Gourmet" data-price="4.30" data-emoji="🍔">+ Añadir</button></div></div></div>
+        <div class="menu-card reveal"><div class="menu-card-img">🍗</div><div class="menu-card-body"><h4>Napolin</h4><p>Medallón de pollo rebozado, lechuga y mahonesa.</p><div class="menu-card-footer"><span class="menu-price">3,50€</span><button class="add-btn" data-name="Napolin" data-price="3.50" data-emoji="🍗">+ Añadir</button></div></div></div>
+        <div class="menu-card reveal"><div class="menu-card-img">🍛</div><div class="menu-card-body"><h4>Pollo Curry</h4><p>Pollo rebozado, cheddar, cebolla, salsa de curry y lechuga.</p><div class="menu-card-footer"><span class="menu-price">4,30€</span><button class="add-btn" data-name="Pollo Curry" data-price="4.30" data-emoji="🍛">+ Añadir</button></div></div></div>
+        <div class="menu-card reveal"><div class="menu-card-img">🍔</div><div class="menu-card-body"><h4>Menú XXL</h4><p>Carne de buey 200gr, queso cheddar, lechuga, mahonesa, patatas fritas y refresco.</p><div class="menu-card-footer"><span class="menu-price">7,00€</span><button class="add-btn" data-name="Menú XXL" data-price="7.00" data-emoji="🍔">+ Añadir</button></div></div></div>
+        <div class="menu-card reveal"><div class="menu-card-img">🍔</div><div class="menu-card-body"><h4>Menú XXL Salvaje</h4><p>Carne de buey 200gr, queso cheddar, lechuga, mahonesa, patatas salvajes y refresco.</p><div class="menu-card-footer"><span class="menu-price">7,50€</span><button class="add-btn" data-name="Menú XXL Salvaje" data-price="7.50" data-emoji="🍔">+ Añadir</button></div></div></div>
+        <div class="menu-card reveal"><div class="menu-card-img">🧒</div><div class="menu-card-body"><h4>Menú Infantil</h4><p>5 nuggets infantiles, patatas fritas, bio frutas y petit.</p><div class="menu-card-footer"><span class="menu-price">5,80€</span><button class="add-btn" data-name="Menú Infantil" data-price="5.80" data-emoji="🧒">+ Añadir</button></div></div></div>
+        <div class="menu-card reveal"><div class="menu-card-img">🧒</div><div class="menu-card-body"><h4>Menú Infantil Hamburguesa</h4><p>Hamburguesa, queso, patatas fritas, bio frutas y petit.</p><div class="menu-card-footer"><span class="menu-price">5,80€</span><button class="add-btn" data-name="Menú Infantil Hamburguesa" data-price="5.80" data-emoji="🧒">+ Añadir</button></div></div></div>
       </div>
     </div>
+
+    <!-- BAGUETTES -->
+    <div class="menu-panel" id="panel-baguettes">
+      <div class="menu-grid">
+        <div class="menu-card reveal"><div class="menu-card-img">🥖</div><div class="menu-card-body"><h4>Mixto</h4><p>Jamón york y queso.</p><div class="menu-card-footer"><span class="menu-price">3,30€</span><button class="add-btn" data-name="Baguette Mixto" data-price="3.30" data-emoji="🥖">+ Añadir</button></div></div></div>
+        <div class="menu-card reveal"><div class="menu-card-img">🍗</div><div class="menu-card-body"><h4>Pollo</h4><p>Pollo, tomate, lechuga y mahonesa.</p><div class="menu-card-footer"><span class="menu-price">3,80€</span><button class="add-btn" data-name="Baguette Pollo" data-price="3.80" data-emoji="🍗">+ Añadir</button></div></div></div>
+        <div class="menu-card reveal"><div class="menu-card-img">🥦</div><div class="menu-card-body"><h4>Vegetal</h4><p>Atún, tomate, lechuga y mahonesa.</p><div class="menu-card-footer"><span class="menu-price">3,80€</span><button class="add-btn" data-name="Baguette Vegetal" data-price="3.80" data-emoji="🥦">+ Añadir</button></div></div></div>
+        <div class="menu-card reveal"><div class="menu-card-img">🥚</div><div class="menu-card-body"><h4>Completo</h4><p>Queso, huevo, jamón york y bacon.</p><div class="menu-card-footer"><span class="menu-price">3,80€</span><button class="add-btn" data-name="Baguette Completo" data-price="3.80" data-emoji="🥚">+ Añadir</button></div></div></div>
+        <div class="menu-card reveal"><div class="menu-card-img">🌮</div><div class="menu-card-body"><h4>Taco</h4><p>Carne de taco, queso, lechuga y mahonesa.</p><div class="menu-card-footer"><span class="menu-price">3,80€</span><button class="add-btn" data-name="Baguette Taco" data-price="3.80" data-emoji="🌮">+ Añadir</button></div></div></div>
+        <div class="menu-card reveal"><div class="menu-card-img">🥔</div><div class="menu-card-body"><h4>Tortilla</h4><p>Tortilla de patatas y mahonesa.</p><div class="menu-card-footer"><span class="menu-price">3,80€</span><button class="add-btn" data-name="Baguette Tortilla" data-price="3.80" data-emoji="🥔">+ Añadir</button></div></div></div>
+        <div class="menu-card reveal"><div class="menu-card-img">🥩</div><div class="menu-card-body"><h4>Gaucho</h4><p>Tomo de cerdo, salsa gaucha y lechuga.</p><div class="menu-card-footer"><span class="menu-price">3,80€</span><button class="add-btn" data-name="Baguette Gaucho" data-price="3.80" data-emoji="🥩">+ Añadir</button></div></div></div>
+        <div class="menu-card reveal"><div class="menu-card-img">🧄</div><div class="menu-card-body"><h4>Pollo Ali-Oli</h4><p>Pollo, salsa ali-oli y lechuga.</p><div class="menu-card-footer"><span class="menu-price">3,80€</span><button class="add-btn" data-name="Baguette Pollo Ali-Oli" data-price="3.80" data-emoji="🧄">+ Añadir</button></div></div></div>
+        <div class="menu-card reveal"><div class="menu-card-img">🥩</div><div class="menu-card-body"><h4>Completo de Taco</h4><p>Queso, huevo, jamón york, bacon, carne de taco y mahonesa.</p><div class="menu-card-footer"><span class="menu-price">5,30€</span><button class="add-btn" data-name="Baguette Completo de Taco" data-price="5.30" data-emoji="🥖">+ Añadir</button></div></div></div>
+        <div class="menu-card reveal"><div class="menu-card-img">🥖</div><div class="menu-card-body"><h4>Completo de Pollo</h4><p>Queso, huevo, jamón york, bacon, pollo, lechuga, tomate y mahonesa.</p><div class="menu-card-footer"><span class="menu-price">5,30€</span><button class="add-btn" data-name="Baguette Completo de Pollo" data-price="5.30" data-emoji="🥖">+ Añadir</button></div></div></div>
+      </div>
+    </div>
+
+    <!-- TEX-MEX -->
+    <div class="menu-panel" id="panel-texmex">
+      <div class="menu-grid">
+        <div class="menu-card reveal"><div class="menu-card-img">🌮</div><div class="menu-card-body"><h4>Nachos con Queso</h4><p>Nachos crujientes con queso fundido.</p><div class="menu-card-footer"><span class="menu-price">3,70€</span><button class="add-btn" data-name="Nachos con Queso" data-price="3.70" data-emoji="🌮">+ Añadir</button></div></div></div>
+        <div class="menu-card reveal"><div class="menu-card-img">🌶️</div><div class="menu-card-body"><h4>Nachos con Carne Picante y Queso</h4><p>Nachos con carne picante y queso fundido.</p><div class="menu-card-footer"><span class="menu-price">5,00€</span><button class="add-btn" data-name="Nachos con Carne Picante y Queso" data-price="5.00" data-emoji="🌶️">+ Añadir</button></div></div></div>
+        <div class="menu-card reveal"><div class="menu-card-img">🌮</div><div class="menu-card-body"><h4>Nachos Mex</h4><p>Nachos, carne picante, queso cheddar, queso edam, tomate natural, guacamole, salsa yogurt y jalapeños.</p><div class="menu-card-footer"><span class="menu-price">6,50€</span><button class="add-btn" data-name="Nachos Mex" data-price="6.50" data-emoji="🌮">+ Añadir</button></div></div></div>
+        <div class="menu-card reveal"><div class="menu-card-img">🌯</div><div class="menu-card-body"><h4>Torta de Carne</h4><p>Carne picante, queso, lechuga, tomate y queso natural.</p><div class="menu-card-footer"><span class="menu-price">3,70€</span><button class="add-btn" data-name="Torta de Carne" data-price="3.70" data-emoji="🌯">+ Añadir</button></div></div></div>
+        <div class="menu-card reveal"><div class="menu-card-img">🌯</div><div class="menu-card-body"><h4>Enrollado de Pollo</h4><p>Pollo crujiente, salsa BBQ, queso y lechuga.</p><div class="menu-card-footer"><span class="menu-price">3,70€</span><button class="add-btn" data-name="Enrollado de Pollo" data-price="3.70" data-emoji="🌯">+ Añadir</button></div></div></div>
+        <div class="menu-card reveal"><div class="menu-card-img">🌯</div><div class="menu-card-body"><h4>Enrollado Completo</h4><p>Pollo, jamón york, huevo, queso, lechuga y ali-oli.</p><div class="menu-card-footer"><span class="menu-price">3,70€</span><button class="add-btn" data-name="Enrollado Completo" data-price="3.70" data-emoji="🌯">+ Añadir</button></div></div></div>
+        <div class="menu-card reveal"><div class="menu-card-img">🧇</div><div class="menu-card-body"><h4>Quesadilla</h4><p>Cazuela de carne picante, queso y 2 tortas de trigo.</p><div class="menu-card-footer"><span class="menu-price">4,30€</span><button class="add-btn" data-name="Quesadilla" data-price="4.30" data-emoji="🧇">+ Añadir</button></div></div></div>
+      </div>
+    </div>
+
+    <!-- ENSALADAS -->
+    <div class="menu-panel" id="panel-ensaladas">
+      <div class="menu-grid">
+        <div class="menu-card reveal"><div class="menu-card-img">🥗</div><div class="menu-card-body"><h4>Simple</h4><p>Lechuga, tomate y cebolla.</p><div class="menu-card-footer"><span class="menu-price">3,50€</span><button class="add-btn" data-name="Ensalada Simple" data-price="3.50" data-emoji="🥗">+ Añadir</button></div></div></div>
+        <div class="menu-card reveal"><div class="menu-card-img">🥗</div><div class="menu-card-body"><h4>Mixta</h4><p>Lechuga, tomate, atún y olivas negras.</p><div class="menu-card-footer"><span class="menu-price">4,50€</span><button class="add-btn" data-name="Ensalada Mixta" data-price="4.50" data-emoji="🥗">+ Añadir</button></div></div></div>
+        <div class="menu-card reveal"><div class="menu-card-img">🥗</div><div class="menu-card-body"><h4>Completa</h4><p>Lechuga, tomate, cebolla, atún, olivas negras y variedad de verduras.</p><div class="menu-card-footer"><span class="menu-price">6,00€</span><button class="add-btn" data-name="Ensalada Completa" data-price="6.00" data-emoji="🥗">+ Añadir</button></div></div></div>
+        <div class="menu-card reveal"><div class="menu-card-img">🍗</div><div class="menu-card-body"><h4>De Pollo</h4><p>Lechuga, pollo, jamón york y queso.</p><div class="menu-card-footer"><span class="menu-price">5,30€</span><button class="add-btn" data-name="Ensalada de Pollo" data-price="5.30" data-emoji="🍗">+ Añadir</button></div></div></div>
+        <div class="menu-card reveal"><div class="menu-card-img">🌮</div><div class="menu-card-body"><h4>Tex-Mex</h4><p>Torta de trigo, lechuga, tomate, cebolla, pollo, nachos, crema de yogur, guacamole, salsa mexicana y cheddar.</p><div class="menu-card-footer"><span class="menu-price">7,20€</span><button class="add-btn" data-name="Ensalada Tex-Mex" data-price="7.20" data-emoji="🌮">+ Añadir</button></div></div></div>
+        <div class="menu-card reveal"><div class="menu-card-img">🍚</div><div class="menu-card-body"><h4>De Arroz</h4><p>Arroz, lechuga, maíz, jamón york, pollo y mahonesa.</p><div class="menu-card-footer"><span class="menu-price">4,50€</span><button class="add-btn" data-name="Ensalada de Arroz" data-price="4.50" data-emoji="🍚">+ Añadir</button></div></div></div>
+        <div class="menu-card reveal"><div class="menu-card-img">🥗</div><div class="menu-card-body"><h4>César</h4><p>Lechuga, tomate, cebolla, maíz, picatostes, filete empanado, queso y salsa césar.</p><div class="menu-card-footer"><span class="menu-price">8,00€</span><button class="add-btn" data-name="Ensalada César" data-price="8.00" data-emoji="🥗">+ Añadir</button></div></div></div>
+      </div>
+    </div>
+
+    <!-- FILETES -->
+    <div class="menu-panel" id="panel-filetes">
+      <div class="menu-grid">
+        <div class="menu-card reveal"><div class="menu-card-img">🍗</div><div class="menu-card-body"><h4>Filete de Pollo Empanado</h4><p>Filete de pollo empanado con patatas o ensalada.</p><div class="menu-card-footer"><span class="menu-price">5,00€</span><button class="add-btn" data-name="Filete de Pollo Empanado" data-price="5.00" data-emoji="🍗">+ Añadir</button></div></div></div>
+        <div class="menu-card reveal"><div class="menu-card-img">🍗</div><div class="menu-card-body"><h4>Pollo a la Plancha</h4><p>Pollo a la plancha con patatas o ensalada.</p><div class="menu-card-footer"><span class="menu-price">5,00€</span><button class="add-btn" data-name="Pollo a la Plancha" data-price="5.00" data-emoji="🍗">+ Añadir</button></div></div></div>
+      </div>
+    </div>
+
   </div>
 </section>
 
@@ -424,15 +292,15 @@
   <div class="container">
     <div class="about-grid">
       <div class="about-text reveal">
-        <h2>Nuestra Historia 🍕❤️</h2>
+        <h2>Nuestra Historia 🍔❤️</h2>
         <p>
-          La Pizzería Nápoles nació en Chipiona hace más de <strong>10 años</strong>, con un sueño sencillo: traer el auténtico sabor napolitano a la Costa de la Luz. Fundada con amor por la familia Rossi, cada pizza se elabora siguiendo las recetas tradicionales transmitidas de generación en generación.
+          Nápoles nació en Chipiona hace más de <strong>10 años</strong>, con un sueño sencillo: ofrecer la mejor comida casera a precios asequibles. Desde el primer día hemos apostado por la calidad y el sabor.
         </p>
         <p>
-          Utilizamos únicamente <strong>ingredientes frescos</strong> del mercado local y de pequeños productores andaluces. Nuestra masa madre fermenta durante 48 horas y nuestro horno de leña alcanza los 450°C para dar ese toque crujiente y ahumado que nos diferencia.
+          Utilizamos únicamente <strong>ingredientes frescos</strong> del mercado local. Cada burguer, cada sandwich, cada ensalada se prepara al momento con todo el cariño del mundo.
         </p>
         <p>
-          Somos más que una pizzería: somos <strong>parte de Chipiona</strong>. Hemos estado en bodas, cumpleaños, noches de verano en la playa… y en cada mesa seguimos poniendo el mismo cariño del primer día.
+          Somos más que un restaurante: somos <strong>parte de Chipiona</strong>. Hemos estado en bodas, cumpleaños, noches de verano… y en cada mesa seguimos poniendo el mismo cariño del primer día.
         </p>
 
         <div class="about-stats">
@@ -455,9 +323,9 @@
       </div>
 
       <div class="about-image reveal">
-        <div class="about-image-icon">🍕</div>
-        <h3>Auténtica Pizza Napolitana</h3>
-        <p>Horno de leña · Masa artesanal · Ingredientes locales</p>
+        <div class="about-image-icon">🍔</div>
+        <h3>Sabor Casero Auténtico</h3>
+        <p>Ingredientes frescos · Todo al momento · Con cariño</p>
         <br/>
         <p>📍 Chipiona, Cádiz, Andalucía</p>
       </div>
@@ -478,7 +346,7 @@
           <div class="testimonial-inner reveal">
             <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
             <p class="testimonial-text">
-              "¡La mejor pizza que he comido fuera de Italia! La masa es increíble, fina y crujiente por los bordes. La Nápoles Especial es espectacular. Ya es nuestra pizzería de cabecera para las noches de verano en Chipiona."
+              "¡La mejor burguer que he comido en Chipiona! El Rulo Ternera es espectacular. Ya es nuestro sitio favorito para cenar en familia."
             </p>
             <div class="testimonial-author">
               <div class="testimonial-avatar">M</div>
@@ -494,7 +362,7 @@
           <div class="testimonial-inner reveal">
             <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
             <p class="testimonial-text">
-              "Pedimos el menú familiar y fue un éxito total con los niños. El reparto a domicilio fue rapidísimo y la pizza llegó caliente. El tiramisú casero estaba de escándalo. ¡Volveremos seguro!"
+              "Los nachos mex son increíbles y el menú XXL una pasada. El reparto a domicilio fue rapidísimo. ¡Volveremos seguro!"
             </p>
             <div class="testimonial-author">
               <div class="testimonial-avatar">J</div>
@@ -510,7 +378,7 @@
           <div class="testimonial-inner reveal">
             <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
             <p class="testimonial-text">
-              "Llevo viniendo desde que abrieron y nunca me han decepcionado. La pizza de Trufa Negra es una obra de arte culinaria. El ambiente, la atención y la calidad son siempre 10/10. ¡Chipiona tiene suerte de tenerlos!"
+              "Llevo viniendo desde que abrieron. La ensalada César y los perritos son mis favoritos. El ambiente y la atención siempre son 10/10."
             </p>
             <div class="testimonial-author">
               <div class="testimonial-avatar">A</div>
@@ -589,7 +457,8 @@
 
         <div class="contact-map">
           <iframe
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d25434.27!2d-6.4371!3d36.7338!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd0e12a72d5c5b7b%3A0x61c15a21a62e8f7c!2sChipiona%2C+C%C3%A1diz!5e0!3m2!1ses!2ses!4v1"
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d25434.27!2d-6.4371!3d36.7338!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd0e12a72d5c5b7b%3A0x61c15a21a62e8f7c!2sChipiona!5e0!3m2!1ses!2ses!4v1700000000000!5m2!1ses!2ses"
+            width="100%" height="250" style="border:0;border-radius:12px;"
             allowfullscreen=""
             loading="lazy"
             referrerpolicy="no-referrer-when-downgrade"
@@ -629,13 +498,13 @@
     <div class="footer-grid">
       <div class="footer-brand">
         <a href="#hero" class="nav-logo">
-          <span class="logo-icon">🍕</span>
+          <span class="logo-icon">🍔</span>
           <div class="logo-text">
-            <span class="logo-name">Pizzería Nápoles</span>
+            <span class="logo-name">Nápoles</span>
             <span class="logo-sub">Chipiona</span>
           </div>
         </a>
-        <p>Más de 10 años trayendo el sabor auténtico napolitano a Chipiona. Ingredientes frescos, recetas tradicionales y mucho amor.</p>
+        <p>Más de 10 años ofreciendo la mejor comida casera en Chipiona. Ingredientes frescos y mucho amor en cada plato.</p>
         <br/>
         <div class="social-links">
           <a href="#" class="social-link" aria-label="Facebook" rel="noopener">
@@ -667,11 +536,12 @@
       <div class="footer-col">
         <h4>Menú</h4>
         <ul>
-          <li><a href="#panel-clasicas">Pizzas Clásicas</a></li>
-          <li><a href="#panel-especiales">Pizzas Especiales</a></li>
-          <li><a href="#panel-entrantes">Entrantes</a></li>
-          <li><a href="#panel-bebidas">Bebidas</a></li>
-          <li><a href="#panel-postres">Postres</a></li>
+          <li><a href="#menu">Fritos</a></li>
+          <li><a href="#menu">Sandwiches</a></li>
+          <li><a href="#menu">Burguers</a></li>
+          <li><a href="#menu">Baguettes</a></li>
+          <li><a href="#menu">Tex-Mex</a></li>
+          <li><a href="#menu">Ensaladas</a></li>
         </ul>
       </div>
 
@@ -689,7 +559,7 @@
     </div>
 
     <div class="footer-bottom">
-      <p>© 2026 Pizzería Nápoles — Chipiona. Todos los derechos reservados.</p>
+      <p>© 2026 Nápoles — Chipiona. Todos los derechos reservados.</p>
       <div class="footer-links">
         <a href="#">Aviso Legal</a>
         <a href="#">Política de Privacidad</a>
@@ -711,7 +581,7 @@
     <div class="cart-empty">
       <span class="cart-empty-icon">🛒</span>
       <p>Tu carrito está vacío</p>
-      <small>¡Añade tus pizzas favoritas!</small>
+      <small>¡Añade tus platos favoritos!</small>
     </div>
   </div>
   <div class="cart-footer">
@@ -719,7 +589,7 @@
       <span>Total:</span>
       <span id="cartTotal">0,00€</span>
     </div>
-    <button class="btn-checkout" onclick="checkout()">🍕 Finalizar Pedido</button>
+    <button class="btn-checkout" onclick="checkout()">🍔 Finalizar Pedido</button>
   </div>
 </div>
 
