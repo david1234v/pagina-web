@@ -31,6 +31,8 @@
         <li><a href="#offers">Ofertas</a></li>
         <li><a href="#about">Nosotros</a></li>
         <li><a href="#contact">Contacto</a></li>
+        <li><a href="#delivery">🛵 Entrega</a></li>
+        <li><a href="#birthday">🎂 Cumpleaños</a></li>
       </ul>
 
       <div class="nav-actions">
@@ -53,6 +55,8 @@
     <a href="#offers">🏷️ Ofertas</a>
     <a href="#about">❤️ Nosotros</a>
     <a href="#contact">📞 Contacto</a>
+    <a href="#delivery">🛵 Entrega</a>
+    <a href="#birthday">🎂 Cumpleaños</a>
   </div>
 </header>
 
@@ -76,6 +80,41 @@
     </div>
   </div>
   <div class="hero-scroll" aria-hidden="true">Descubre más</div>
+</section>
+
+<!-- ===== DELIVERY TIME ===== -->
+<section id="delivery">
+  <div class="container">
+    <div class="delivery-widget reveal">
+      <div class="delivery-info">
+        <h2>🛵 Tiempo de Entrega Estimado</h2>
+        <div class="delivery-status-row">
+          <span class="delivery-status-badge" id="deliveryStatusBadge">🟢 Abierto</span>
+          <span class="delivery-time-display" id="deliveryTimeDisplay">30 min</span>
+        </div>
+        <p class="delivery-note">Tiempo estimado de entrega a domicilio en Chipiona</p>
+      </div>
+      <button class="admin-toggle-btn" id="adminToggleBtn" onclick="openAdminPanel()">⚙️ Admin</button>
+    </div>
+
+    <!-- Admin Panel -->
+    <div class="admin-panel" id="adminPanel" style="display:none;">
+      <h3>🔧 Panel de Administración</h3>
+      <div class="admin-form">
+        <label>Tiempo estimado (minutos):
+          <input type="number" id="adminTimeInput" min="5" max="120" value="30" />
+        </label>
+        <label>Estado:
+          <select id="adminStatusInput">
+            <option value="open">🟢 Abierto</option>
+            <option value="busy">🟡 Mucha demanda</option>
+            <option value="closed">🔴 Cerrado</option>
+          </select>
+        </label>
+        <button class="btn btn-primary" id="adminSaveBtn" onclick="saveDeliverySettings()">💾 Guardar</button>
+      </div>
+    </div>
+  </div>
 </section>
 
 <!-- ===== OFFERS ===== -->
@@ -336,70 +375,191 @@
 <!-- ===== TESTIMONIALS ===== -->
 <section id="testimonials">
   <div class="container">
-    <h2 class="section-title reveal">💬 Lo que dicen nuestros clientes</h2>
-    <p class="section-subtitle reveal">Más de 500 reseñas positivas en Google</p>
+    <h2 class="section-title reveal">⭐ Lo que dicen nuestros clientes</h2>
+    <p class="section-subtitle reveal">Reseñas reales de Google Maps</p>
 
-    <div class="testimonials-slider">
-      <div class="testimonials-track" id="testimonialsTrack">
+    <div class="slider-container">
+      <div class="slider-track" id="testimonialsTrack">
 
-        <div class="testimonial-card">
-          <div class="testimonial-inner reveal">
-            <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
-            <p class="testimonial-text">
-              "¡La mejor burguer que he comido en Chipiona! El Rulo Ternera es espectacular. Ya es nuestro sitio favorito para cenar en familia."
-            </p>
-            <div class="testimonial-author">
-              <div class="testimonial-avatar">M</div>
-              <div class="testimonial-info">
-                <div class="name">María García</div>
-                <div class="role">Cliente habitual · Chipiona</div>
+        <!-- Reseña 1 -->
+        <div class="slide">
+          <div class="review-card">
+            <div class="review-header">
+              <div class="review-avatar">A</div>
+              <div class="review-author-info">
+                <strong>ANTONIO M. M</strong>
+                <span class="local-guide-badge">⭐ Local Guide · 534 reseñas</span>
+                <span class="review-date">Hace 6 meses · 40-50€</span>
               </div>
+              <div class="review-stars">⭐⭐⭐⭐⭐</div>
+            </div>
+            <p class="review-text">"Me lo recomendó un paisano chipionero y fui a la aventura merece la pena un local excepcional tanto dentro como fuera, pedimos unas patatas con queso y bacon y dos pizzas con los ingredientes que quisimos todo estába para chuparse los dedos no sobró nada, tanto el trato por parte del personal buenísimo merece la pena visitarlos"</p>
+            <div class="review-ratings">
+              <span class="rating-badge">🍽️ Comida: 5/5</span>
+              <span class="rating-badge">🤝 Servicio: 5/5</span>
+              <span class="rating-badge">🏠 Ambiente: 5/5</span>
             </div>
           </div>
         </div>
 
-        <div class="testimonial-card">
-          <div class="testimonial-inner reveal">
-            <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
-            <p class="testimonial-text">
-              "Los nachos mex son increíbles y el menú XXL una pasada. El reparto a domicilio fue rapidísimo. ¡Volveremos seguro!"
-            </p>
-            <div class="testimonial-author">
-              <div class="testimonial-avatar">J</div>
-              <div class="testimonial-info">
-                <div class="name">Juan Carlos López</div>
-                <div class="role">Cliente familiar · Sanlúcar de Barrameda</div>
+        <!-- Reseña 2 -->
+        <div class="slide">
+          <div class="review-card">
+            <div class="review-header">
+              <div class="review-avatar">C</div>
+              <div class="review-author-info">
+                <strong>CARLOS SANTOS BRAVO</strong>
+                <span class="local-guide-badge">⭐ Local Guide · 18 reseñas</span>
+                <span class="review-date">Hace 2 meses · 10-20€</span>
               </div>
+              <div class="review-stars">⭐⭐⭐⭐⭐</div>
+            </div>
+            <p class="review-text">"Personalizas completamente tu pizza. Quizás abrume un poco tener tantas opciones, estaría bien tener un par de pizzas ya creadas por defecto, pero están ricas. Además atendieron a mi perrita de maravilla"</p>
+          </div>
+        </div>
+
+        <!-- Reseña 3 -->
+        <div class="slide">
+          <div class="review-card">
+            <div class="review-header">
+              <div class="review-avatar">M</div>
+              <div class="review-author-info">
+                <strong>Marcelo</strong>
+                <span class="local-guide-badge">⭐ Local Guide · 70 reseñas</span>
+                <span class="review-date">Hace 3 años</span>
+              </div>
+              <div class="review-stars">⭐⭐⭐⭐⭐</div>
+            </div>
+            <p class="review-text">"Siempre que voy a Chipiona tengo que ir a comer las pizzas de aquí. La relación calidad-precio es muy buena. Los ingredientes se notan frescos y las pizzas en general están riquísimas. Además, el servicio es correcto y no suelen tardar mucho en tener la comida lista. Lo recomendaría sin dudas."</p>
+          </div>
+        </div>
+
+        <!-- Reseña 4 -->
+        <div class="slide">
+          <div class="review-card">
+            <div class="review-header">
+              <div class="review-avatar">A</div>
+              <div class="review-author-info">
+                <strong>Adrian Villoria Acosta</strong>
+                <span class="local-guide-badge">⭐ Local Guide · 50 reseñas</span>
+                <span class="review-date">Hace 6 años</span>
+              </div>
+              <div class="review-stars">⭐⭐⭐⭐⭐</div>
+            </div>
+            <p class="review-text">"Esta pizzería hace más de 10 años en la que soy cliente y nunca defrauda, para mí no debe de faltar el plato de patatas con queso y tacos, buenísimas!! Y las pizzas muy bien también, tienen una amplia carta con comida mexicana, sándwich, hamburguesas etc"</p>
+          </div>
+        </div>
+
+        <!-- Reseña 5 -->
+        <div class="slide">
+          <div class="review-card">
+            <div class="review-header">
+              <div class="review-avatar">P</div>
+              <div class="review-author-info">
+                <strong>pepe pepe pepe</strong>
+                <span class="local-guide-badge">⭐ Local Guide · 82 reseñas</span>
+                <span class="review-date">Hace 7 meses</span>
+              </div>
+              <div class="review-stars">⭐⭐⭐⭐⭐</div>
+            </div>
+            <p class="review-text">"Buena pizzeria, cálidad, atención, una gran variedad en pizzas, hamburguesas, etc, gran equipo de profesionales a la atención de los clientes, desde aquí, doy las gracias a todos, en especial a rocio, e Iván, que nos atendieron, volveremos."</p>
+            <div class="review-ratings">
+              <span class="rating-badge">🍽️ Comida: 5/5</span>
+              <span class="rating-badge">🤝 Servicio: 5/5</span>
+              <span class="rating-badge">🏠 Ambiente: 5/5</span>
             </div>
           </div>
         </div>
 
-        <div class="testimonial-card">
-          <div class="testimonial-inner reveal">
-            <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
-            <p class="testimonial-text">
-              "Llevo viniendo desde que abrieron. La ensalada César y los perritos son mis favoritos. El ambiente y la atención siempre son 10/10."
-            </p>
-            <div class="testimonial-author">
-              <div class="testimonial-avatar">A</div>
-              <div class="testimonial-info">
-                <div class="name">Ana Martínez</div>
-                <div class="role">Cliente fiel desde 2015 · Chipiona</div>
+        <!-- Reseña 6 -->
+        <div class="slide">
+          <div class="review-card">
+            <div class="review-header">
+              <div class="review-avatar">D</div>
+              <div class="review-author-info">
+                <strong>diego L.C</strong>
+                <span class="local-guide-badge">⭐ Local Guide · 542 reseñas</span>
+                <span class="review-date">Hace un año</span>
               </div>
+              <div class="review-stars">⭐⭐⭐⭐</div>
+            </div>
+            <p class="review-text">"Buena comida mucha variedad y muy buena gente."</p>
+            <div class="review-ratings">
+              <span class="rating-badge">🍽️ Comida: 4/5</span>
+              <span class="rating-badge">🤝 Servicio: 4/5</span>
+              <span class="rating-badge">🏠 Ambiente: 4/5</span>
             </div>
           </div>
         </div>
 
-      </div>
-
-      <div class="slider-controls">
-        <button class="slider-btn" id="sliderPrev" aria-label="Anterior">&#8592;</button>
-        <div class="slider-dots">
-          <div class="dot active"></div>
-          <div class="dot"></div>
-          <div class="dot"></div>
+        <!-- Reseña 7 -->
+        <div class="slide">
+          <div class="review-card">
+            <div class="review-header">
+              <div class="review-avatar">C</div>
+              <div class="review-author-info">
+                <strong>Camino al Paraíso</strong>
+                <span class="local-guide-badge">⭐ Local Guide · 78 reseñas</span>
+                <span class="review-date">Hace 3 años · 20-30€</span>
+              </div>
+              <div class="review-stars">⭐⭐⭐⭐⭐</div>
+            </div>
+            <p class="review-text">"La masa es buena y la cantidad de ingredientes bastante generosa. Los repartidores son rápidos y amables y la calidad en general muy buena, siempre llamamos a Domicio"</p>
+          </div>
         </div>
-        <button class="slider-btn" id="sliderNext" aria-label="Siguiente">&#8594;</button>
+
+        <!-- Reseña 8 -->
+        <div class="slide">
+          <div class="review-card">
+            <div class="review-header">
+              <div class="review-avatar">Z</div>
+              <div class="review-author-info">
+                <strong>Zara Pezinni</strong>
+                <span class="local-guide-badge">⭐ Local Guide · 80 reseñas</span>
+                <span class="review-date">Hace un año · 10-20€</span>
+              </div>
+              <div class="review-stars">⭐⭐⭐⭐⭐</div>
+            </div>
+            <p class="review-text">"Fuimos a comer una pizza el día de ayer, nos encantó la calidad del producto, la rapidez y la amabilidad de el personal. Solo comimos en el lugar, llegamos temprano, estaba bien. Osea comer e irte. Totalmente recomendada"</p>
+            <div class="review-ratings">
+              <span class="rating-badge">🍽️ Comida: 5/5</span>
+              <span class="rating-badge">🤝 Servicio: 5/5</span>
+              <span class="rating-badge">🏠 Ambiente: 3/5</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Reseña 9 -->
+        <div class="slide">
+          <div class="review-card">
+            <div class="review-header">
+              <div class="review-avatar">R</div>
+              <div class="review-author-info">
+                <strong>ritz Arrondo</strong>
+                <span class="local-guide-badge">⭐ Local Guide · 39 reseñas</span>
+                <span class="review-date">Hace 4 años</span>
+              </div>
+              <div class="review-stars">⭐⭐⭐⭐⭐</div>
+            </div>
+            <p class="review-text">"Fuimos dos veces, la primera a comer hamburguesas que estaban muy buenas, la bebida un poquito cara pero es lógico que tienen que sacar de ahí puesto que el precio de la comida es muy bueno. Repetimos así que eso lo deja claro. Las pizzas estaban buenas también, puedes hacerte la tuya al gusto, la atención simplemente increíble, la gente que trabaja de cara al público ahí 10/10."</p>
+          </div>
+        </div>
+
+      </div><!-- end slider-track -->
+
+      <button class="slider-btn prev" id="sliderPrev" aria-label="Anterior">&#10094;</button>
+      <button class="slider-btn next" id="sliderNext" aria-label="Siguiente">&#10095;</button>
+
+      <div class="slider-dots">
+        <button class="dot" aria-label="Ir a reseña 1"></button>
+        <button class="dot" aria-label="Ir a reseña 2"></button>
+        <button class="dot" aria-label="Ir a reseña 3"></button>
+        <button class="dot" aria-label="Ir a reseña 4"></button>
+        <button class="dot" aria-label="Ir a reseña 5"></button>
+        <button class="dot" aria-label="Ir a reseña 6"></button>
+        <button class="dot" aria-label="Ir a reseña 7"></button>
+        <button class="dot" aria-label="Ir a reseña 8"></button>
+        <button class="dot" aria-label="Ir a reseña 9"></button>
       </div>
     </div>
   </div>
@@ -487,6 +647,45 @@
             ✅ ¡Mensaje enviado! Te responderemos en menos de 24 horas.
           </div>
         </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== BIRTHDAY ===== -->
+<section id="birthday">
+  <div class="container">
+    <h2 class="section-title reveal">🎂 Reserva tu Cumpleaños</h2>
+    <p class="section-subtitle reveal">Celebra con nosotros — solo disponible para reservas de cumpleaños</p>
+
+    <div class="birthday-form-wrapper reveal">
+      <form id="birthdayForm">
+        <div class="form-group">
+          <label for="bName">Nombre completo *</label>
+          <input type="text" id="bName" name="bName" required placeholder="Tu nombre completo" />
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="bDate">Fecha del evento *</label>
+            <input type="date" id="bDate" name="bDate" required />
+          </div>
+          <div class="form-group">
+            <label for="bTime">Hora de llegada aproximada *</label>
+            <input type="time" id="bTime" name="bTime" required />
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="bPeople">Número de personas *</label>
+          <input type="number" id="bPeople" name="bPeople" required min="2" max="100" placeholder="Ej: 10" />
+        </div>
+        <div class="form-group">
+          <label for="bNotes">Notas adicionales (opcional)</label>
+          <textarea id="bNotes" name="bNotes" rows="4" placeholder="Alergias, decoración especial, peticiones..."></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">🎉 Solicitar Reserva</button>
+      </form>
+      <div id="birthdaySuccess" style="display:none;" class="form-success">
+        ¡Reserva recibida! 🎂 Nos pondremos en contacto contigo pronto para confirmar.
       </div>
     </div>
   </div>
