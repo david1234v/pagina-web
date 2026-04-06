@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nápoles Admin — Panel de Administración</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="admin.css" />
+</head>
+<body>
+
+<div class="admin-layout">
+
+  <!-- ===== SIDEBAR ===== -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-icon">🍔</div>
+      <div class="sidebar-logo-text">
+        <span class="sidebar-logo-name">Nápoles Admin</span>
+        <span class="sidebar-logo-sub">Chipiona · Panel</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Principal</div>
+
+      <div class="nav-item active" data-section="dashboard">
+        <span class="nav-item-icon"><i class="fas fa-chart-pie"></i></span>
+        📊 Dashboard
+      </div>
+
+      <div class="nav-item" data-section="pedidos">
+        <span class="nav-item-icon"><i class="fas fa-shopping-cart"></i></span>
+        🛒 Pedidos
+      </div>
+
+      <div class="nav-section-label">Restaurante</div>
+
+      <div class="nav-item" data-section="menu">
+        <span class="nav-item-icon"><i class="fas fa-utensils"></i></span>
+        🍔 Gestión del Menú
+      </div>
+
+      <div class="nav-item" data-section="ofertas">
+        <span class="nav-item-icon"><i class="fas fa-tag"></i></span>
+        🏷️ Ofertas
+      </div>
+
+      <div class="nav-item" data-section="delivery">
+        <span class="nav-item-icon"><i class="fas fa-motorcycle"></i></span>
+        🛵 Entrega &amp; Estado
+      </div>
+
+      <div class="nav-section-label">Clientes</div>
+
+      <div class="nav-item" data-section="reservas">
+        <span class="nav-item-icon"><i class="fas fa-birthday-cake"></i></span>
+        🎂 Reservas Cumpleaños
+        <span class="nav-badge" id="reservasBadge">2</span>
+      </div>
+
+      <div class="nav-item" data-section="mensajes">
+        <span class="nav-item-icon"><i class="fas fa-envelope"></i></span>
+        📞 Mensajes
+        <span class="nav-badge" id="mensajesBadge">2</span>
+      </div>
+
+      <div class="nav-item" data-section="resenas">
+        <span class="nav-item-icon"><i class="fas fa-star"></i></span>
+        ⭐ Reseñas
+      </div>
+
+      <div class="nav-section-label">Análisis</div>
+
+      <div class="nav-item" data-section="estadisticas">
+        <span class="nav-item-icon"><i class="fas fa-chart-line"></i></span>
+        📈 Estadísticas
+      </div>
+
+      <div class="nav-item" data-section="config">
+        <span class="nav-item-icon"><i class="fas fa-cog"></i></span>
+        ⚙️ Configuración
+      </div>
+    </nav>
+
+    <div class="sidebar-footer">
+      <button class="btn-logout" onclick="logout()">
+        <i class="fas fa-sign-out-alt"></i> 🚪 Cerrar Sesión
+      </button>
+    </div>
+  </aside>
+
+  <!-- Overlay móvil para sidebar -->
+  <div class="sidebar-mobile-overlay" id="sidebarOverlay"></div>
+
+  <!-- ===== MAIN CONTENT ===== -->
+  <main class="main-content">
+
+    <!-- Header -->
+    <header class="admin-header">
+      <div class="header-left">
+        <button class="hamburger-admin" id="hamburgerAdmin" aria-label="Menú">
+          <span></span><span></span><span></span>
+        </button>
+        <h1 class="header-title" id="headerTitle">📊 Dashboard</h1>
+      </div>
+      <div class="header-right">
+        <div class="header-clock" id="adminClock">--:--:--</div>
+        <a href="index.html" target="_blank" class="btn-visit-site">
+          <i class="fas fa-external-link-alt"></i>
+          <span>Ver sitio</span>
+        </a>
+        <div class="admin-avatar">
+          🔐
+          <span class="avatar-badge">ADMIN</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Content -->
+    <div class="content-area">
+
+      <!-- ===========================
+           SECCIÓN 1: DASHBOARD
+           =========================== -->
+      <div class="section-view active" id="section-dashboard">
+
+        <!-- Stats grid -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon orange">🛒</div>
+            <div class="stat-info">
+              <div class="stat-label">Pedidos Hoy</div>
+              <div class="stat-value">24</div>
+              <div class="stat-sub">+3 vs ayer</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon green">💶</div>
+            <div class="stat-info">
+              <div class="stat-label">Ingresos Hoy</div>
+              <div class="stat-value">342,50€</div>
+              <div class="stat-sub">+12% vs ayer</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon blue">⏱️</div>
+            <div class="stat-info">
+              <div class="stat-label">Tiempo Entrega</div>
+              <div class="stat-value" id="dash-delivery-time">30 min</div>
+              <div class="stat-sub">Estimado actual</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon red">🟢</div>
+            <div class="stat-info">
+              <div class="stat-label">Estado Actual</div>
+              <div class="stat-value" id="dash-delivery-status" style="font-size:1rem">Abierto</div>
+              <div class="stat-sub">Delivery activo</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Charts row -->
+        <div class="grid-2" style="margin-bottom:1.2rem">
+          <div class="admin-card">
+            <div class="card-header">
+              <div class="card-title">📊 Pedidos por día de la semana</div>
+              <span class="badge badge-muted">Esta semana</span>
+            </div>
+            <div class="chart-wrapper" id="barChartContainer"></div>
+          </div>
+          <div class="admin-card">
+            <div class="card-header">
+              <div class="card-title">🏆 Productos más pedidos</div>
+              <span class="badge badge-orange">Top 5</span>
+            </div>
+            <div id="topProductsContainer"></div>
+          </div>
+        </div>
+
+        <!-- Last orders -->
+        <div class="admin-card">
+          <div class="card-header">
+            <div class="card-title">🕒 Últimos Pedidos</div>
+            <button class="btn btn-secondary btn-sm" onclick="showSection('pedidos')">
+              Ver todos <i class="fas fa-arrow-right"></i>
+            </button>
+          </div>
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>#ID</th><th>Hora</th><th>Productos</th><th>Total</th><th>Estado</th>
+                </tr>
+              </thead>
+              <tbody id="lastOrdersTbody">
+                <tr><td colspan="5" style="text-align:center;color:var(--admin-text-muted)">Cargando...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div><!-- /section-dashboard -->
+
+
+      <!-- ===========================
+           SECCIÓN 2: PEDIDOS
+           =========================== -->
+      <div class="section-view" id="section-pedidos">
+
+        <div class="admin-card">
+          <div class="card-header">
+            <div class="card-title">🛒 Todos los Pedidos</div>
+            <div class="search-bar">
+              <i class="fas fa-search"></i>
+              <input type="text" placeholder="Buscar pedido…"
+                     oninput="pedidosSearch=this.value;renderPedidosTable()" />
+            </div>
+          </div>
+
+          <div class="filter-tabs">
+            <button class="filter-tab active" data-filter="todos"       onclick="setPedidosFilter('todos')">Todos</button>
+            <button class="filter-tab"         data-filter="pendiente"  onclick="setPedidosFilter('pendiente')">⏳ Pendiente</button>
+            <button class="filter-tab"         data-filter="preparacion"onclick="setPedidosFilter('preparacion')">🔄 En preparación</button>
+            <button class="filter-tab"         data-filter="camino"     onclick="setPedidosFilter('camino')">🛵 En camino</button>
+            <button class="filter-tab"         data-filter="entregado"  onclick="setPedidosFilter('entregado')">✅ Entregado</button>
+            <button class="filter-tab"         data-filter="cancelado"  onclick="setPedidosFilter('cancelado')">❌ Cancelado</button>
+          </div>
+
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>#ID</th><th>Fecha/Hora</th><th>Cliente</th>
+                  <th>Productos</th><th>Total</th><th>Estado</th><th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="pedidosTbody"></tbody>
+            </table>
+          </div>
+
+          <div class="pagination">
+            <button class="page-btn active">1</button>
+            <button class="page-btn">2</button>
+            <button class="page-btn"><i class="fas fa-chevron-right"></i></button>
+          </div>
+        </div>
+
+      </div><!-- /section-pedidos -->
+
+
+      <!-- ===========================
+           SECCIÓN 3: MENÚ
+           =========================== -->
+      <div class="section-view" id="section-menu">
+
+        <div class="admin-card">
+          <div class="card-header">
+            <div class="card-title">🍔 Gestión del Menú</div>
+            <button class="btn btn-primary btn-sm" onclick="openModal('addProduct')">
+              <i class="fas fa-plus"></i> Añadir Producto
+            </button>
+          </div>
+
+          <div class="filter-tabs">
+            <button class="filter-tab active" data-cat="Todos"      onclick="setMenuCat('Todos')">Todos</button>
+            <button class="filter-tab"         data-cat="Fritos"    onclick="setMenuCat('Fritos')">🍟 Fritos</button>
+            <button class="filter-tab"         data-cat="Sandwiches"onclick="setMenuCat('Sandwiches')">🥪 Sandwiches</button>
+            <button class="filter-tab"         data-cat="Perritos"  onclick="setMenuCat('Perritos')">🌭 Perritos</button>
+            <button class="filter-tab"         data-cat="Pasta"     onclick="setMenuCat('Pasta')">🍝 Pasta</button>
+            <button class="filter-tab"         data-cat="Burguers"  onclick="setMenuCat('Burguers')">🍔 Burguers</button>
+            <button class="filter-tab"         data-cat="Baguettes" onclick="setMenuCat('Baguettes')">🥖 Baguettes</button>
+            <button class="filter-tab"         data-cat="Tex-Mex"   onclick="setMenuCat('Tex-Mex')">🌮 Tex-Mex</button>
+            <button class="filter-tab"         data-cat="Ensaladas" onclick="setMenuCat('Ensaladas')">🥗 Ensaladas</button>
+            <button class="filter-tab"         data-cat="Filetes"   onclick="setMenuCat('Filetes')">🥩 Filetes</button>
+          </div>
+
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Emoji</th><th>Nombre</th><th>Categoría</th>
+                  <th>Precio</th><th>Activo</th><th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="menuTbody"></tbody>
+            </table>
+          </div>
+        </div>
+
+      </div><!-- /section-menu -->
+
+
+      <!-- ===========================
+           SECCIÓN 4: OFERTAS
+           =========================== -->
+      <div class="section-view" id="section-ofertas">
+
+        <div class="card-header" style="margin-bottom:1rem">
+          <h2 style="font-size:1rem;font-weight:700;color:var(--admin-text)">🏷️ Gestión de Ofertas</h2>
+          <button class="btn btn-primary btn-sm" onclick="openModal('addOferta')">
+            <i class="fas fa-plus"></i> Nueva Oferta
+          </button>
+        </div>
+
+        <div class="grid-3" id="ofertasContainer"></div>
+
+        <!-- Oferta Flash -->
+        <div class="admin-card" style="margin-top:1rem">
+          <div class="card-title" style="margin-bottom:0.8rem">⚡ Oferta Flash del Día</div>
+          <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap">
+            <div>
+              <label class="form-label">Descuento (%)</label>
+              <input type="number" class="form-control" style="width:100px" id="flashDiscount"
+                     min="1" max="80" value="20" />
+            </div>
+            <div>
+              <label class="form-label">Texto descriptivo</label>
+              <input type="text" class="form-control" style="width:280px" id="flashText"
+                     value="¡Descuento en todos los menús! Termina hoy a medianoche." />
+            </div>
+            <div style="align-self:flex-end">
+              <button class="btn btn-primary" onclick="saveFlashOffer()">💾 Guardar oferta flash</button>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /section-ofertas -->
+
+
+      <!-- ===========================
+           SECCIÓN 5: DELIVERY
+           =========================== -->
+      <div class="section-view" id="section-delivery">
+
+        <div class="grid-2">
+          <!-- Estado -->
+          <div class="admin-card">
+            <div class="card-title" style="margin-bottom:1rem">🟢 Estado del Servicio</div>
+            <div class="delivery-status-btns">
+              <button class="delivery-btn" data-status="open"   onclick="setDeliveryStatus('open')">
+                <span class="d-emoji">🟢</span>
+                Abierto
+                <small style="font-size:0.7rem;opacity:0.8">Pedidos activos</small>
+              </button>
+              <button class="delivery-btn" data-status="busy"   onclick="setDeliveryStatus('busy')">
+                <span class="d-emoji">🟡</span>
+                Alta demanda
+                <small style="font-size:0.7rem;opacity:0.8">Puede haber espera</small>
+              </button>
+              <button class="delivery-btn" data-status="closed" onclick="setDeliveryStatus('closed')">
+                <span class="d-emoji">🔴</span>
+                Cerrado
+                <small style="font-size:0.7rem;opacity:0.8">Sin pedidos</small>
+              </button>
+            </div>
+
+            <label class="form-label">⏱️ Tiempo estimado de entrega (minutos)</label>
+            <div style="display:flex;gap:0.6rem;align-items:center;margin-bottom:1rem">
+              <input type="range" id="deliveryTimeInput" min="5" max="120" step="5"
+                     value="30" style="flex:1;accent-color:var(--admin-accent)"
+                     oninput="document.getElementById('deliveryTimeDisplay2').textContent=this.value+' min'" />
+              <span id="deliveryTimeDisplay2" style="min-width:52px;font-weight:700;color:var(--admin-accent)">30 min</span>
+            </div>
+
+            <button class="btn btn-primary" onclick="saveDeliverySettings()">
+              <i class="fas fa-save"></i> Guardar cambios
+            </button>
+          </div>
+
+          <!-- Historial -->
+          <div class="admin-card">
+            <div class="card-title" style="margin-bottom:0.8rem">📋 Historial de cambios</div>
+            <div id="deliveryHistoryList">
+              <div style="color:var(--admin-text-muted);font-size:0.82rem">Sin historial aún.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Horario -->
+        <div class="admin-card">
+          <div class="card-header">
+            <div class="card-title">🕐 Horario de Apertura</div>
+            <button class="btn btn-primary btn-sm" onclick="saveSchedule()">
+              <i class="fas fa-save"></i> Guardar horario
+            </button>
+          </div>
+          <div class="table-wrapper">
+            <table class="schedule-table">
+              <thead>
+                <tr>
+                  <th>Día</th><th>Apertura</th><th>Cierre</th><th>Cerrado</th>
+                </tr>
+              </thead>
+              <tbody id="scheduleTbody"></tbody>
+            </table>
+          </div>
+        </div>
+
+      </div><!-- /section-delivery -->
+
+
+      <!-- ===========================
+           SECCIÓN 6: RESERVAS
+           =========================== -->
+      <div class="section-view" id="section-reservas">
+
+        <div class="admin-card">
+          <div class="card-header">
+            <div class="card-title">🎂 Reservas de Cumpleaños</div>
+          </div>
+
+          <div class="filter-tabs">
+            <button class="filter-tab active" data-filter="todas"      onclick="setReservasFilter('todas')">Todas</button>
+            <button class="filter-tab"         data-filter="pendiente" onclick="setReservasFilter('pendiente')">⏳ Pendiente</button>
+            <button class="filter-tab"         data-filter="confirmada"onclick="setReservasFilter('confirmada')">✅ Confirmada</button>
+            <button class="filter-tab"         data-filter="cancelada" onclick="setReservasFilter('cancelada')">❌ Cancelada</button>
+          </div>
+
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Nombre</th><th>Fecha Evento</th><th>Hora</th>
+                  <th>Personas</th><th>Notas</th><th>Estado</th><th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="reservasTbody"></tbody>
+            </table>
+          </div>
+        </div>
+
+      </div><!-- /section-reservas -->
+
+
+      <!-- ===========================
+           SECCIÓN 7: MENSAJES
+           =========================== -->
+      <div class="section-view" id="section-mensajes">
+
+        <div class="admin-card">
+          <div class="card-header">
+            <div class="card-title">📞 Mensajes de Contacto</div>
+          </div>
+
+          <div class="filter-tabs">
+            <button class="filter-tab active" data-filter="todos"      onclick="setMensajesFilter('todos')">Todos</button>
+            <button class="filter-tab"         data-filter="nuevo"     onclick="setMensajesFilter('nuevo')">🔴 Nuevos</button>
+            <button class="filter-tab"         data-filter="leido"     onclick="setMensajesFilter('leido')">👁️ Leídos</button>
+            <button class="filter-tab"         data-filter="respondido"onclick="setMensajesFilter('respondido')">✅ Respondidos</button>
+          </div>
+
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Nombre</th><th>Email</th><th>Mensaje</th>
+                  <th>Fecha</th><th>Estado</th><th>Acción</th>
+                </tr>
+              </thead>
+              <tbody id="mensajesTbody"></tbody>
+            </table>
+          </div>
+        </div>
+
+      </div><!-- /section-mensajes -->
+
+
+      <!-- ===========================
+           SECCIÓN 8: RESEÑAS
+           =========================== -->
+      <div class="section-view" id="section-resenas">
+
+        <div class="grid-2" style="margin-bottom:1.2rem">
+          <!-- Puntuación media -->
+          <div class="admin-card">
+            <div class="card-title" style="margin-bottom:1rem">⭐ Distribución de estrellas</div>
+            <div style="display:flex;align-items:center;gap:1.5rem;margin-bottom:1rem">
+              <div class="big-stat" style="padding:0">
+                <div class="big-stat-value" id="avgRating">4.8</div>
+                <div class="big-stat-label">Media</div>
+              </div>
+              <div style="flex:1" id="starDistribution"></div>
+            </div>
+          </div>
+          <!-- Añadir reseña -->
+          <div class="admin-card" style="display:flex;flex-direction:column;justify-content:center;align-items:center;gap:0.8rem">
+            <div style="font-size:2rem">⭐</div>
+            <div class="card-title">Añadir nueva reseña</div>
+            <p style="font-size:0.82rem;color:var(--admin-text-muted);text-align:center">Añade manualmente reseñas de clientes satisfechos</p>
+            <button class="btn btn-primary" onclick="openModal('addResena')">
+              <i class="fas fa-plus"></i> Añadir Reseña
+            </button>
+          </div>
+        </div>
+
+        <div class="admin-card">
+          <div class="card-header">
+            <div class="card-title">💬 Todas las Reseñas</div>
+            <span class="badge badge-muted" id="resenasCount"></span>
+          </div>
+          <div id="resenasContainer"></div>
+        </div>
+
+      </div><!-- /section-resenas -->
+
+
+      <!-- ===========================
+           SECCIÓN 9: ESTADÍSTICAS
+           =========================== -->
+      <div class="section-view" id="section-estadisticas">
+
+        <!-- Big numbers -->
+        <div class="stats-grid" style="margin-bottom:1.2rem">
+          <div class="stat-card">
+            <div class="stat-icon orange">📅</div>
+            <div class="stat-info">
+              <div class="stat-label">Ingresos Mes</div>
+              <div class="stat-value">8.240€</div>
+              <div class="stat-sub">Abril 2026</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon green">🎫</div>
+            <div class="stat-info">
+              <div class="stat-label">Ticket Medio</div>
+              <div class="stat-value">9,80€</div>
+              <div class="stat-sub">Por pedido</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon blue">🍔</div>
+            <div class="stat-info">
+              <div class="stat-label">Categoría Top</div>
+              <div class="stat-value" style="font-size:1.1rem">Burguers</div>
+              <div class="stat-sub">38% del total</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon red">📦</div>
+            <div class="stat-info">
+              <div class="stat-label">Pedidos Mes</div>
+              <div class="stat-value">841</div>
+              <div class="stat-sub">+8% vs mes anterior</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="admin-card">
+            <div class="card-title" style="margin-bottom:1rem">📈 Ingresos por día (semana actual vs anterior)</div>
+            <div class="chart-wrapper" id="weeklyChartContainer"></div>
+          </div>
+          <div class="admin-card">
+            <div class="card-title" style="margin-bottom:1rem">🕐 Pedidos por franja horaria</div>
+            <div class="chart-wrapper" id="hourlyChartContainer"></div>
+          </div>
+        </div>
+
+        <!-- Comparativa tabla -->
+        <div class="admin-card" style="margin-top:1.2rem">
+          <div class="card-title" style="margin-bottom:1rem">📊 Comparativa semana actual vs anterior</div>
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Día</th>
+                  <th>Pedidos (actual)</th><th>Pedidos (anterior)</th>
+                  <th>Ingresos (actual)</th><th>Ingresos (anterior)</th>
+                  <th>Variación</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>Lunes</td>    <td>18</td><td>15</td><td>176,40€</td><td>147,00€</td><td><span class="badge badge-success">+20%</span></td></tr>
+                <tr><td>Martes</td>   <td>31</td><td>28</td><td>303,80€</td><td>274,40€</td><td><span class="badge badge-success">+11%</span></td></tr>
+                <tr><td>Miércoles</td><td>22</td><td>25</td><td>215,60€</td><td>245,00€</td><td><span class="badge badge-danger">-12%</span></td></tr>
+                <tr><td>Jueves</td>   <td>19</td><td>18</td><td>186,20€</td><td>176,40€</td><td><span class="badge badge-success">+6%</span></td></tr>
+                <tr><td>Viernes</td>  <td>45</td><td>42</td><td>441,00€</td><td>411,60€</td><td><span class="badge badge-success">+7%</span></td></tr>
+                <tr><td>Sábado</td>   <td>67</td><td>61</td><td>656,60€</td><td>597,80€</td><td><span class="badge badge-success">+10%</span></td></tr>
+                <tr><td>Domingo</td>  <td>52</td><td>49</td><td>509,60€</td><td>480,20€</td><td><span class="badge badge-success">+6%</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div><!-- /section-estadisticas -->
+
+
+      <!-- ===========================
+           SECCIÓN 10: CONFIGURACIÓN
+           =========================== -->
+      <div class="section-view" id="section-config">
+
+        <div class="grid-2">
+          <!-- Info del restaurante -->
+          <div class="admin-card">
+            <div class="card-title" style="margin-bottom:1rem">🏪 Información del Restaurante</div>
+            <div class="form-group">
+              <label class="form-label" for="cfg-restaurantName">Nombre</label>
+              <input class="form-control" id="cfg-restaurantName" type="text" />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="cfg-telefono">Teléfono</label>
+              <input class="form-control" id="cfg-telefono" type="text" />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="cfg-whatsapp">WhatsApp Link</label>
+              <input class="form-control" id="cfg-whatsapp" type="url" />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="cfg-direccion">Dirección</label>
+              <input class="form-control" id="cfg-direccion" type="text" />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="cfg-horarioTexto">Horario (texto)</label>
+              <input class="form-control" id="cfg-horarioTexto" type="text" />
+            </div>
+          </div>
+
+          <!-- Configuración del sitio -->
+          <div class="admin-card">
+            <div class="card-title" style="margin-bottom:1rem">⚙️ Configuración del Sitio</div>
+            <div class="form-group">
+              <label class="form-label" for="cfg-descuentoFlash">Descuento Oferta Flash (%)</label>
+              <input class="form-control" id="cfg-descuentoFlash" type="number" min="1" max="80" />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="cfg-precioMinimo">Precio mínimo delivery (€)</label>
+              <input class="form-control" id="cfg-precioMinimo" type="number" min="0" step="0.50" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Mostrar sección Cumpleaños</label>
+              <div class="toggle-wrapper">
+                <label class="toggle">
+                  <input type="checkbox" id="cfg-showBirthday" />
+                  <span class="toggle-slider"></span>
+                </label>
+                <span style="font-size:0.82rem;color:var(--admin-text-muted)">Visible en el sitio</span>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Mostrar Countdown oferta flash</label>
+              <div class="toggle-wrapper">
+                <label class="toggle">
+                  <input type="checkbox" id="cfg-showCountdown" />
+                  <span class="toggle-slider"></span>
+                </label>
+                <span style="font-size:0.82rem;color:var(--admin-text-muted)">Visible en el sitio</span>
+              </div>
+            </div>
+
+            <button class="btn btn-primary" style="width:100%;margin-top:0.5rem" onclick="saveConfig()">
+              <i class="fas fa-save"></i> Guardar configuración
+            </button>
+          </div>
+        </div>
+
+        <!-- Cambiar contraseña -->
+        <div class="admin-card" style="max-width:480px">
+          <div class="card-title" style="margin-bottom:1rem">🔐 Cambiar Contraseña Admin</div>
+          <div class="form-group">
+            <label class="form-label" for="pwdActual">Contraseña actual</label>
+            <input class="form-control" id="pwdActual" type="password" placeholder="••••••••" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="pwdNueva">Nueva contraseña</label>
+            <input class="form-control" id="pwdNueva" type="password" placeholder="••••••••" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="pwdConfirm">Confirmar nueva contraseña</label>
+            <input class="form-control" id="pwdConfirm" type="password" placeholder="••••••••" />
+          </div>
+          <button class="btn btn-secondary" onclick="cambiarPassword()">
+            <i class="fas fa-key"></i> Cambiar contraseña
+          </button>
+        </div>
+
+      </div><!-- /section-config -->
+
+    </div><!-- /content-area -->
+  </main><!-- /main-content -->
+</div><!-- /admin-layout -->
+
+<!-- Toast -->
+<div class="admin-toast" id="adminToast"></div>
+
+<!-- ===== MODALES ===== -->
+
+<!-- Modal: Añadir Producto -->
+<div class="modal-overlay" id="modal-addProduct">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">🍽️ Añadir Producto</div>
+      <button class="modal-close" onclick="closeModal('addProduct')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="newProdNombre">Nombre del producto</label>
+      <input class="form-control" id="newProdNombre" type="text" placeholder="Ej: Perrito Especial" />
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="newProdEmoji">Emoji</label>
+      <input class="form-control" id="newProdEmoji" type="text" placeholder="🍔" style="width:80px" maxlength="4" />
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="newProdPrecio">Precio (€)</label>
+      <input class="form-control" id="newProdPrecio" type="number" min="0" step="0.10" placeholder="4.50" />
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="newProdCat">Categoría</label>
+      <select class="form-control" id="newProdCat">
+        <option>Fritos</option><option>Sandwiches</option><option>Perritos</option>
+        <option>Pasta</option><option>Burguers</option><option>Baguettes</option>
+        <option>Tex-Mex</option><option>Ensaladas</option><option>Filetes</option>
+      </select>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('addProduct')">Cancelar</button>
+      <button class="btn btn-primary" onclick="guardarNuevoProducto()">
+        <i class="fas fa-plus"></i> Añadir
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Añadir Oferta -->
+<div class="modal-overlay" id="modal-addOferta">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">🏷️ Nueva Oferta</div>
+      <button class="modal-close" onclick="closeModal('addOferta')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Tag (HOT / FAM / DEAL…)</label>
+      <input class="form-control" id="newOfTag" type="text" placeholder="HOT" maxlength="6" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">Título</label>
+      <input class="form-control" id="newOfTitulo" type="text" placeholder="Nombre de la oferta" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">Descripción</label>
+      <input class="form-control" id="newOfDesc" type="text" placeholder="Descripción corta…" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">Texto del precio</label>
+      <input class="form-control" id="newOfPrecio" type="text" placeholder="Ej: 9,99€" />
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('addOferta')">Cancelar</button>
+      <button class="btn btn-primary" onclick="guardarNuevaOferta()">
+        <i class="fas fa-plus"></i> Añadir Oferta
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Añadir Reseña -->
+<div class="modal-overlay" id="modal-addResena">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">⭐ Añadir Reseña</div>
+      <button class="modal-close" onclick="closeModal('addResena')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Nombre del cliente</label>
+      <input class="form-control" id="newRNombre" type="text" placeholder="Ej: María G." />
+    </div>
+    <div class="form-group">
+      <label class="form-label">Texto de la reseña</label>
+      <textarea class="form-control" id="newRTexto" rows="3" placeholder="Escribe aquí la reseña…"></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Estrellas (1-5)</label>
+      <select class="form-control" id="newREstrellas" style="width:100px">
+        <option value="5">⭐⭐⭐⭐⭐ (5)</option>
+        <option value="4">⭐⭐⭐⭐ (4)</option>
+        <option value="3">⭐⭐⭐ (3)</option>
+        <option value="2">⭐⭐ (2)</option>
+        <option value="1">⭐ (1)</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Fecha (texto, ej: Abril 2026)</label>
+      <input class="form-control" id="newRFecha" type="text" placeholder="Abril 2026" />
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('addResena')">Cancelar</button>
+      <button class="btn btn-primary" onclick="guardarNuevaResena()">
+        <i class="fas fa-star"></i> Añadir Reseña
+      </button>
+    </div>
+  </div>
+</div>
+
+<script src="admin.js"></script>
+<script>
+  // Funciones extra que necesitan el HTML cargado
+  function saveFlashOffer() {
+    const discount = document.getElementById('flashDiscount')?.value;
+    const text     = document.getElementById('flashText')?.value;
+    const config   = JSON.parse(localStorage.getItem('napoles-config') || '{}');
+    config.descuentoFlash = discount;
+    config.flashText      = text;
+    localStorage.setItem('napoles-config', JSON.stringify(config));
+    showToast('✅ Oferta flash actualizada');
+  }
+
+  function guardarNuevaOferta() {
+    const tag    = document.getElementById('newOfTag')?.value.trim()    || 'NUEVO';
+    const titulo = document.getElementById('newOfTitulo')?.value.trim();
+    const desc   = document.getElementById('newOfDesc')?.value.trim();
+    const precio = document.getElementById('newOfPrecio')?.value.trim();
+    if (!titulo) { showToast('El título es obligatorio', 'error'); return; }
+    OFERTAS.push({ id: OFERTAS.length, tag, titulo, descripcion: desc, precio, activa: true });
+    closeModal('addOferta');
+    renderOfertas();
+    showToast('✅ Oferta añadida');
+  }
+
+  // Sync slider display on load
+  document.addEventListener('DOMContentLoaded', () => {
+    const slider = document.getElementById('deliveryTimeInput');
+    const display = document.getElementById('deliveryTimeDisplay2');
+    if (slider && display) {
+      const saved = localStorage.getItem('napoles-delivery-time') || '30';
+      slider.value = saved;
+      display.textContent = saved + ' min';
+      slider.addEventListener('input', () => {
+        display.textContent = slider.value + ' min';
+      });
+    }
+  });
+</script>
+</body>
+</html>

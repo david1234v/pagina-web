@@ -284,13 +284,7 @@ function initBirthdayForm() {
 const ADMIN_PASSWORD = 'napoles2026';
 
 function openAdminPanel() {
-  const pwd = prompt('Contraseña de administrador:');
-  if (pwd === ADMIN_PASSWORD) {
-    const panel = document.getElementById('adminPanel');
-    if (panel) panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
-  } else if (pwd !== null) {
-    showToast('❌ Contraseña incorrecta');
-  }
+  window.location.href = 'login.html';
 }
 
 function saveDeliverySettings() {
