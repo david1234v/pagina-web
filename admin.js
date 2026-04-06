@@ -1,6 +1,6 @@
 /* ===== admin.js — Panel de Administración Nápoles Chipiona ===== */
 
-import { db, ref, set, get, onValue, push, update } from './firebase.js';
+import { db, ref, set, get, onValue, push, update, remove } from './firebase.js';
 
 'use strict';
 
@@ -1163,6 +1163,8 @@ window.showSection = showSection;
 window.openModal = openModal;
 window.closeModal = closeModal;
 window.setPedidosFilter = setPedidosFilter;
+window.setPedidosSearch = function(q) { pedidosSearch = q; renderPedidosTable(); };
+window.renderPedidosTable = renderPedidosTable;
 window.cambiarEstadoPedido = cambiarEstadoPedido;
 window.setMenuCat = setMenuCat;
 window.editarPrecio = editarPrecio;
