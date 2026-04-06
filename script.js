@@ -281,8 +281,6 @@ function initBirthdayForm() {
 }
 
 // ===== Delivery Time =====
-const ADMIN_PASSWORD = 'napoles2026';
-
 function openAdminPanel() {
   window.location.href = 'login.html';
 }

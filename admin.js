@@ -2,6 +2,17 @@
 
 'use strict';
 
+// ===== UTILIDADES =====
+/** Escapa caracteres HTML para prevenir XSS al usar innerHTML */
+function escHtml(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
 // ===== AUTENTICACIÓN =====
 function checkSession() {
   if (localStorage.getItem('napoles-admin-session') !== 'true') {
@@ -437,8 +448,8 @@ function renderOfertas() {
     <div class="offer-edit-card">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.8rem">
         <div style="display:flex;align-items:center;gap:0.5rem">
-          <span class="badge badge-orange">${o.tag}</span>
-          <span style="font-weight:700;color:var(--admin-text)">${o.titulo}</span>
+          <span class="badge badge-orange">${escHtml(o.tag)}</span>
+          <span style="font-weight:700;color:var(--admin-text)">${escHtml(o.titulo)}</span>
         </div>
         <label class="toggle">
           <input type="checkbox" ${o.activa ? 'checked' : ''} onchange="toggleOferta(${o.id},this.checked)" />
@@ -447,20 +458,20 @@ function renderOfertas() {
       </div>
       <div class="form-group">
         <label class="form-label">Título</label>
-        <input class="form-control" value="${o.titulo}" onblur="actualizarOferta(${o.id},'titulo',this.value)" />
+        <input class="form-control" value="${escHtml(o.titulo)}" onblur="actualizarOferta(${o.id},'titulo',this.value)" />
       </div>
       <div class="form-group">
         <label class="form-label">Descripción</label>
-        <input class="form-control" value="${o.descripcion}" onblur="actualizarOferta(${o.id},'descripcion',this.value)" />
+        <input class="form-control" value="${escHtml(o.descripcion)}" onblur="actualizarOferta(${o.id},'descripcion',this.value)" />
       </div>
       <div class="form-group">
         <label class="form-label">Texto del precio</label>
-        <input class="form-control" value="${o.precio}" onblur="actualizarOferta(${o.id},'precio',this.value)" />
+        <input class="form-control" value="${escHtml(o.precio)}" onblur="actualizarOferta(${o.id},'precio',this.value)" />
       </div>
       <div class="offer-preview">
-        <div class="offer-preview-title">${o.titulo}</div>
-        <div>${o.descripcion}</div>
-        <div style="color:var(--admin-accent);font-weight:700;margin-top:0.3rem">${o.precio}</div>
+        <div class="offer-preview-title">${escHtml(o.titulo)}</div>
+        <div>${escHtml(o.descripcion)}</div>
+        <div style="color:var(--admin-accent);font-weight:700;margin-top:0.3rem">${escHtml(o.precio)}</div>
       </div>
     </div>`).join('');
 }
@@ -555,11 +566,13 @@ function loadSchedule() {
 
   tbody.innerHTML = DIAS_SEMANA.map((dia, i) => {
     const row = saved ? saved[i] : { open: defaultOpen[i], close: defaultClose[i], cerrado: false };
+    const openVal   = escHtml(row.open   || defaultOpen[i]);
+    const closeVal  = escHtml(row.close  || defaultClose[i]);
     return `
     <tr>
-      <td style="font-weight:600">${dia}</td>
-      <td><input type="time" class="sch-open" data-i="${i}" value="${row.open}" /></td>
-      <td><input type="time" class="sch-close" data-i="${i}" value="${row.close}" /></td>
+      <td style="font-weight:600">${escHtml(dia)}</td>
+      <td><input type="time" class="sch-open" data-i="${i}" value="${openVal}" /></td>
+      <td><input type="time" class="sch-close" data-i="${i}" value="${closeVal}" /></td>
       <td>
         <label class="toggle">
           <input type="checkbox" class="sch-cerrado" data-i="${i}" ${row.cerrado ? 'checked' : ''} />
@@ -724,11 +737,11 @@ function renderResenas() {
       <div style="display:flex;align-items:flex-start;gap:1rem">
         <div style="flex:1">
           <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.3rem">
-            <strong>${r.nombre}</strong>
-            <span class="stars-display">${'⭐'.repeat(r.estrellas)}</span>
-            <span style="color:var(--admin-text-muted);font-size:0.75rem">${r.fecha}</span>
+            <strong>${escHtml(r.nombre)}</strong>
+            <span class="stars-display">${'⭐'.repeat(Math.min(5, Math.max(1, r.estrellas)))}</span>
+            <span style="color:var(--admin-text-muted);font-size:0.75rem">${escHtml(r.fecha)}</span>
           </div>
-          <p style="font-size:0.85rem;color:var(--admin-text-muted)">"${r.texto}"</p>
+          <p style="font-size:0.85rem;color:var(--admin-text-muted)">"${escHtml(r.texto)}"</p>
         </div>
         <label class="toggle" title="${r.activa ? 'Visible' : 'Oculta'}">
           <input type="checkbox" ${r.activa ? 'checked' : ''} onchange="toggleResena(${i},this.checked)" />
@@ -879,7 +892,7 @@ function cambiarPassword() {
   const storedPwd = localStorage.getItem('napoles-admin-password') || 'napoles2026';
 
   if (actual !== storedPwd)    { showToast('❌ Contraseña actual incorrecta', 'error'); return; }
-  if (!nueva || nueva.length < 6) { showToast('❌ La nueva contraseña debe tener al menos 6 caracteres', 'error'); return; }
+  if (!nueva || nueva.length < 8) { showToast('❌ La nueva contraseña debe tener al menos 8 caracteres', 'error'); return; }
   if (nueva !== confirm)       { showToast('❌ Las contraseñas no coinciden', 'error'); return; }
 
   localStorage.setItem('napoles-admin-password', nueva);
