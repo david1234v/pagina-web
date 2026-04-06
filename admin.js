@@ -1,6 +1,6 @@
 /* ===== admin.js — Panel de Administración Nápoles Chipiona ===== */
 
-import { db, ref, set, get, onValue, push, update, remove } from './firebase.js';
+import { db, collection, doc, addDoc, setDoc, getDoc, getDocs, updateDoc, deleteDoc, onSnapshot, query, orderBy, serverTimestamp } from './firebase.js';
 
 'use strict';
 
@@ -197,7 +197,14 @@ const MENU_PRODUCTOS = [
 ];
 
 // ===== SECCIÓN 1: DASHBOARD =====
-let allPedidosFirebase = [];
+let allPedidosData = [];
+let allReservasData = [];
+let allMensajesData = [];
+
+// Alias a datos simulados usados como fallback cuando Firestore está vacío
+const SAMPLE_FALLBACK_PEDIDOS  = PEDIDOS_SIMULADOS;
+const SAMPLE_FALLBACK_RESERVAS = RESERVAS_SIMULADAS;
+const SAMPLE_FALLBACK_MENSAJES = MENSAJES_SIMULADOS;
 
 function calcularStatsHoy(pedidos) {
   const hoy = new Date();
@@ -226,14 +233,14 @@ function renderDashboard() {
   setElText('dash-delivery-status', statusLabels[deliveryStatus] || deliveryStatus);
 
   // Actualizar estadísticas con datos reales si disponibles
-  if (allPedidosFirebase.length > 0) {
-    const stats = calcularStatsHoy(allPedidosFirebase);
+  if (allPedidosData.length > 0) {
+    const stats = calcularStatsHoy(allPedidosData);
     setElText('dash-pedidos-hoy', stats.pedidosHoy);
     setElText('dash-ingresos-hoy', stats.ingresosHoy + '€');
   }
 
   renderBarChart();
-  renderLastOrdersTable();
+  renderLastOrdersDashboard();
   renderTopProducts();
 }
 
@@ -277,25 +284,31 @@ function renderBarChart() {
   container.innerHTML = svg;
 }
 
-function renderLastOrdersTable() {
+function renderLastOrdersDashboard() {
   const tbody = document.getElementById('lastOrdersTbody');
   if (!tbody) return;
+  const data = allPedidosData.slice(0, 6);
+  if (data.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--admin-text-muted)">Sin pedidos aún. Haz un pedido de prueba en la web principal.</td></tr>';
+    return;
+  }
   const estadoBadge = {
+    pendiente:   '<span class="badge badge-orange">⏳ Pendiente</span>',
+    preparacion: '<span class="badge badge-blue">🔄 Preparación</span>',
+    camino:      '<span class="badge badge-muted">🛵 En camino</span>',
     entregado:   '<span class="badge badge-success">✅ Entregado</span>',
-    preparacion: '<span class="badge badge-warning">🔄 En preparación</span>',
-    camino:      '<span class="badge badge-info">🛵 En camino</span>',
-    pendiente:   '<span class="badge badge-muted">⏳ Pendiente</span>',
-    cancelado:   '<span class="badge badge-danger">❌ Cancelado</span>',
+    cancelado:   '<span class="badge badge-danger">❌ Cancelado</span>'
   };
-  const source = pedidosData.length > 0 ? pedidosData : PEDIDOS_SIMULADOS;
-  tbody.innerHTML = source.slice(0, 6).map(p => `
-    <tr>
-      <td><strong>${escHtml(String(p.id))}</strong></td>
-      <td>${escHtml(p.fecha)}</td>
-      <td>${escHtml(p.productos)}</td>
-      <td><strong>${escHtml(p.total)}</strong></td>
-      <td>${estadoBadge[p.estado] || escHtml(p.estado)}</td>
-    </tr>`).join('');
+  tbody.innerHTML = data.map(p => {
+    const hora = p.timestamp ? new Date(p.timestamp).toLocaleTimeString('es-ES', {hour:'2-digit', minute:'2-digit'}) : '--:--';
+    const prods = Array.isArray(p.productos)
+      ? p.productos.map(x => `${x.emoji||''} ${x.nombre||x.name||''}`).join(', ').substring(0, 60)
+      : (p.productos || 'Sin detalle');
+    const badge = estadoBadge[p.estado] || `<span class="badge badge-muted">${escHtml(p.estado||'?')}</span>`;
+    const shortId = String(p.id).substring(0, 8);
+    const totalStr = typeof p.total === 'number' ? p.total.toFixed(2) + '€' : String(p.total || '');
+    return `<tr><td>#${escHtml(shortId)}</td><td>${escHtml(hora)}</td><td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escHtml(prods)}</td><td>${escHtml(totalStr)}</td><td>${badge}</td></tr>`;
+  }).join('');
 }
 
 function renderTopProducts() {
@@ -322,46 +335,40 @@ function renderTopProducts() {
 // ===== SECCIÓN 2: PEDIDOS =====
 let pedidosFilter = 'todos';
 let pedidosSearch = '';
-let pedidosData = []; // datos activos (Firebase o simulados como fallback)
 
-function initPedidos() {
-  // Escuchar pedidos en tiempo real desde Firebase
+function initFirestorePedidos() {
   try {
-    onValue(ref(db, 'pedidos'), (snapshot) => {
-      const pedidosFirebase = [];
-      if (snapshot.exists()) {
-        snapshot.forEach(child => {
-          const p = child.val();
-          // Normalizar formato para renderizado
-          const productos = Array.isArray(p.productos)
-            ? p.productos.map(x => `${x.emoji || ''} ${x.nombre} x${x.cantidad}`).join(', ')
-            : (p.productos || '');
-          pedidosFirebase.push({
-            id: child.key,
-            fecha: p.fecha ? new Date(p.fecha).toLocaleString('es-ES', { day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit' }) : '—',
-            cliente: p.cliente || 'Cliente web',
-            productos,
-            total: p.total ? p.total.toFixed(2) + '€' : '0.00€',
-            estado: p.estado || 'pendiente',
-            timestamp: p.timestamp || 0,
-            _raw: p
-          });
+    const q = query(collection(db, 'pedidos'), orderBy('timestamp', 'desc'));
+    onSnapshot(q, (snapshot) => {
+      allPedidosData = [];
+      snapshot.forEach(docSnap => {
+        const data = docSnap.data();
+        allPedidosData.push({
+          id: docSnap.id,
+          ...data,
+          timestamp: data.timestamp?.toMillis ? data.timestamp.toMillis() : (data.timestamp || 0)
         });
-      }
-      pedidosFirebase.sort((a, b) => b.timestamp - a.timestamp);
-
-      // Usar Firebase si tiene datos, si no usar simulados como fallback
-      pedidosData = pedidosFirebase.length > 0 ? pedidosFirebase : PEDIDOS_SIMULADOS;
-      allPedidosFirebase = pedidosFirebase;
+      });
       renderPedidosTable();
-      renderLastOrdersTable();
-    });
+      renderLastOrdersDashboard();
+      updateDashboardStatsFromFirestore();
+    }, (e) => { console.warn('Error escuchando pedidos:', e); renderPedidosTable(); });
   } catch(e) {
-    console.warn('Firebase no disponible para pedidos:', e);
-    pedidosData = PEDIDOS_SIMULADOS;
-    allPedidosFirebase = [];
+    console.warn('Firestore pedidos error:', e);
     renderPedidosTable();
   }
+}
+
+function updateDashboardStatsFromFirestore() {
+  const hoy = new Date();
+  const pedidosHoy = allPedidosData.filter(p => {
+    const f = new Date(p.timestamp || 0);
+    return f.getDate() === hoy.getDate() && f.getMonth() === hoy.getMonth() && f.getFullYear() === hoy.getFullYear();
+  });
+  const ingresosHoy = pedidosHoy.filter(p => p.estado !== 'cancelado').reduce((s, p) => s + (parseFloat(p.total) || 0), 0);
+  const cards = document.querySelectorAll('#section-dashboard .stat-card');
+  if (cards[0]) cards[0].querySelector('.stat-value').textContent = pedidosHoy.length;
+  if (cards[1]) cards[1].querySelector('.stat-value').textContent = ingresosHoy.toFixed(2) + '€';
 }
 
 function setPedidosFilter(f) {
@@ -382,21 +389,32 @@ function renderPedidosTable() {
     pendiente:   '<span class="badge badge-muted">⏳ Pendiente</span>',
     cancelado:   '<span class="badge badge-danger">❌ Cancelado</span>',
   };
-  const filtered = pedidosData.filter(p => {
+  const dataSource = allPedidosData.length > 0 ? allPedidosData : SAMPLE_FALLBACK_PEDIDOS;
+  const filtered = dataSource.filter(p => {
     const matchFilter = pedidosFilter === 'todos' || p.estado === pedidosFilter;
     const q = pedidosSearch.toLowerCase();
-    const matchSearch = !q || String(p.id).toLowerCase().includes(q) || p.productos.toLowerCase().includes(q) || String(p.cliente).toLowerCase().includes(q);
+    const productosStr = Array.isArray(p.productos)
+      ? p.productos.map(x => `${x.nombre||x.name||''}`).join(', ')
+      : String(p.productos || '');
+    const matchSearch = !q || String(p.id).toLowerCase().includes(q) || productosStr.toLowerCase().includes(q) || String(p.cliente || '').toLowerCase().includes(q);
     return matchFilter && matchSearch;
   });
   tbody.innerHTML = filtered.length === 0
     ? `<tr><td colspan="7" style="text-align:center;color:var(--admin-text-muted);padding:2rem">No hay pedidos con ese filtro.</td></tr>`
-    : filtered.map(p => `
+    : filtered.map(p => {
+        const fecha = p.fecha || (p.timestamp ? new Date(p.timestamp).toLocaleString('es-ES', {day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit'}) : '—');
+        const cliente = p.cliente || 'Cliente web';
+        const productosStr = Array.isArray(p.productos)
+          ? p.productos.map(x => `${x.emoji||''} ${x.nombre||x.name||''} x${x.qty||x.cantidad||1}`).join(', ')
+          : String(p.productos || '');
+        const totalStr = typeof p.total === 'number' ? p.total.toFixed(2) + '€' : String(p.total || '');
+        return `
     <tr>
       <td><strong>${escHtml(String(p.id))}</strong></td>
-      <td>${escHtml(p.fecha)}</td>
-      <td>${escHtml(p.cliente)}</td>
-      <td>${escHtml(p.productos)}</td>
-      <td><strong>${escHtml(p.total)}</strong></td>
+      <td>${escHtml(fecha)}</td>
+      <td>${escHtml(cliente)}</td>
+      <td>${escHtml(productosStr)}</td>
+      <td><strong>${escHtml(totalStr)}</strong></td>
       <td>${estadoBadge[p.estado] || escHtml(p.estado)}</td>
       <td>
         <select class="form-control" style="width:auto;font-size:0.75rem;padding:0.25rem 0.5rem"
@@ -408,21 +426,18 @@ function renderPedidosTable() {
           <option value="cancelado"   ${p.estado==='cancelado'?'selected':''}>❌ Cancelado</option>
         </select>
       </td>
-    </tr>`).join('');
+    </tr>`;
+      }).join('');
 }
 
-function cambiarEstadoPedido(id, nuevoEstado) {
+async function cambiarEstadoPedido(id, nuevoEstado) {
   const estadosValidos = ['pendiente', 'preparacion', 'camino', 'entregado', 'cancelado'];
   if (!estadosValidos.includes(nuevoEstado)) return;
-  // Intentar actualizar en Firebase primero
   try {
-    update(ref(db, 'pedidos/' + id), { estado: nuevoEstado })
-      .catch(e => console.warn('Error actualizando pedido:', e));
-  } catch(e) {
-    console.warn('Firebase no disponible:', e);
-  }
+    await updateDoc(doc(db, 'pedidos', id), { estado: nuevoEstado });
+  } catch(e) { console.warn('Error actualizando pedido en Firestore:', e); }
   // Actualizar también en memoria local (para fallback simulado)
-  const pedido = pedidosData.find(p => p.id === id);
+  const pedido = allPedidosData.find(p => p.id === id);
   if (pedido) { pedido.estado = nuevoEstado; renderPedidosTable(); }
   showToast(`Pedido ${id} → ${nuevoEstado}`);
 }
@@ -565,11 +580,11 @@ function actualizarOferta(id, campo, val) {
 
 // ===== SECCIÓN 5: DELIVERY =====
 function loadDeliverySettings() {
-  // Cargar estado desde Firebase en tiempo real
+  // Cargar estado desde Firestore
   try {
-    get(ref(db, 'config/delivery')).then(snapshot => {
-      if (snapshot.exists()) {
-        const data = snapshot.val();
+    getDoc(doc(db, 'config', 'delivery')).then(snap => {
+      if (snap.exists()) {
+        const data = snap.data();
         const status = data.status || 'open';
         const time = data.time ? String(data.time) : '30';
         localStorage.setItem('napoles-delivery-status', status);
@@ -582,7 +597,7 @@ function loadDeliverySettings() {
         );
       }
     }).catch(e => {
-      console.warn('Error leyendo delivery de Firebase:', e);
+      console.warn('Error leyendo delivery de Firestore:', e);
       applyDeliveryUI(
         localStorage.getItem('napoles-delivery-status') || 'open',
         localStorage.getItem('napoles-delivery-time') || '30'
@@ -630,16 +645,13 @@ function saveDeliverySettings() {
   localStorage.setItem('napoles-delivery-status', statusVal);
   localStorage.setItem('napoles-delivery-time', time);
 
-  // Guardar en Firebase
+  // Guardar en Firestore
   try {
-    set(ref(db, 'config/delivery'), {
-      time: parseInt(time),
-      status: statusVal,
-      updatedAt: Date.now()
-    }).catch(e => console.warn('Error guardando en Firebase:', e));
-  } catch(e) {
-    console.warn('Firebase no disponible:', e);
-  }
+    const timeInt = parseInt(document.getElementById('deliveryTimeInput')?.value || localStorage.getItem('napoles-delivery-time') || 30);
+    const statusStored = localStorage.getItem('napoles-delivery-status') || 'open';
+    setDoc(doc(db, 'config', 'delivery'), { time: timeInt, status: statusStored, updatedAt: serverTimestamp() })
+      .catch(e => console.warn('Error guardando delivery:', e));
+  } catch(e) {}
 
   // Guardar historial
   const history = JSON.parse(localStorage.getItem('napoles-delivery-history') || '[]');
@@ -716,34 +728,33 @@ function saveSchedule() {
 
 // ===== SECCIÓN 6: RESERVAS =====
 let reservasFilter = 'todas';
-let reservasData = []; // activos (Firebase o simulados)
 
-function initReservas() {
-  // Escuchar reservas en tiempo real desde Firebase
+function initFirestoreReservas() {
   try {
-    onValue(ref(db, 'reservas'), (snapshot) => {
-      const reservasFirebase = [];
-      if (snapshot.exists()) {
-        snapshot.forEach(child => {
-          reservasFirebase.push({ id: child.key, ...child.val() });
+    const q = query(collection(db, 'reservas'), orderBy('timestamp', 'desc'));
+    onSnapshot(q, (snapshot) => {
+      allReservasData = [];
+      snapshot.forEach(docSnap => {
+        const data = docSnap.data();
+        allReservasData.push({
+          id: docSnap.id,
+          ...data,
+          timestamp: data.timestamp?.toMillis ? data.timestamp.toMillis() : (data.timestamp || 0)
         });
-      }
-      reservasFirebase.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
-
-      reservasData = reservasFirebase.length > 0 ? reservasFirebase : RESERVAS_SIMULADAS;
-      updateReservasBadge();
+      });
       renderReservasTable();
-    });
+      const pending = allReservasData.filter(r => r.estado === 'pendiente').length;
+      const badge = document.getElementById('reservasBadge');
+      if (badge) { badge.textContent = pending || ''; badge.style.display = pending > 0 ? '' : 'none'; }
+    }, (e) => { console.warn('Error escuchando reservas:', e); });
   } catch(e) {
-    console.warn('Firebase no disponible para reservas:', e);
-    reservasData = RESERVAS_SIMULADAS;
-    updateReservasBadge();
+    console.warn('Firestore reservas error:', e);
     renderReservasTable();
   }
 }
 
 function updateReservasBadge() {
-  const pendientes = reservasData.filter(r => r.estado === 'pendiente').length;
+  const pendientes = allReservasData.filter(r => r.estado === 'pendiente').length;
   const badge = document.getElementById('reservasBadge');
   if (badge) badge.textContent = pendientes;
 }
@@ -764,9 +775,10 @@ function renderReservasTable() {
     confirmada: '<span class="badge badge-success">✅ Confirmada</span>',
     cancelada:  '<span class="badge badge-danger">❌ Cancelada</span>',
   };
+  const dataSource = allReservasData.length > 0 ? allReservasData : SAMPLE_FALLBACK_RESERVAS;
   const filtered = reservasFilter === 'todas'
-    ? reservasData
-    : reservasData.filter(r => r.estado === reservasFilter);
+    ? dataSource
+    : dataSource.filter(r => r.estado === reservasFilter);
 
   tbody.innerHTML = filtered.length === 0
     ? `<tr><td colspan="7" style="text-align:center;color:var(--admin-text-muted);padding:2rem">Sin reservas.</td></tr>`
@@ -779,22 +791,18 @@ function renderReservasTable() {
       <td title="${escHtml(r.notas || '')}">${r.notas ? escHtml(r.notas.substring(0, 30)) + (r.notas.length > 30 ? '…' : '') : '—'}</td>
       <td>${estadoBadge[r.estado] || escHtml(r.estado || '')}</td>
       <td style="display:flex;gap:0.3rem;flex-wrap:wrap">
-        ${r.estado !== 'confirmada' ? `<button class="btn btn-success btn-xs" onclick="cambiarEstadoReserva('${escHtml(String(r.id || reservasData.indexOf(r)))}','confirmada')">✅</button>` : ''}
-        ${r.estado !== 'cancelada'  ? `<button class="btn btn-danger btn-xs"  onclick="cambiarEstadoReserva('${escHtml(String(r.id || reservasData.indexOf(r)))}','cancelada')">❌</button>` : ''}
+        ${r.estado !== 'confirmada' ? `<button class="btn btn-success btn-xs" onclick="cambiarEstadoReserva('${escHtml(String(r.id || dataSource.indexOf(r)))}','confirmada')">✅</button>` : ''}
+        ${r.estado !== 'cancelada'  ? `<button class="btn btn-danger btn-xs"  onclick="cambiarEstadoReserva('${escHtml(String(r.id || dataSource.indexOf(r)))}','cancelada')">❌</button>` : ''}
       </td>
     </tr>`).join('');
 }
 
-function cambiarEstadoReserva(id, estado) {
-  // Intentar actualizar en Firebase
+async function cambiarEstadoReserva(id, estado) {
   try {
-    update(ref(db, 'reservas/' + id), { estado })
-      .catch(e => console.warn('Error actualizando reserva:', e));
-  } catch(e) {
-    console.warn('Firebase no disponible:', e);
-  }
+    await updateDoc(doc(db, 'reservas', id), { estado });
+  } catch(e) { console.warn('Error actualizando reserva en Firestore:', e); }
   // Actualizar en memoria local
-  const reserva = reservasData.find(r => String(r.id) === String(id)) || reservasData[parseInt(id)];
+  const reserva = allReservasData.find(r => String(r.id) === String(id)) || allReservasData[parseInt(id)];
   if (reserva) { reserva.estado = estado; }
   updateReservasBadge();
   renderReservasTable();
@@ -803,34 +811,33 @@ function cambiarEstadoReserva(id, estado) {
 
 // ===== SECCIÓN 7: MENSAJES =====
 let mensajesFilter = 'todos';
-let mensajesData = []; // activos (Firebase o simulados)
 
-function initMensajes() {
-  // Escuchar mensajes en tiempo real desde Firebase
+function initFirestoreMensajes() {
   try {
-    onValue(ref(db, 'mensajes'), (snapshot) => {
-      const mensajesFirebase = [];
-      if (snapshot.exists()) {
-        snapshot.forEach(child => {
-          mensajesFirebase.push({ id: child.key, ...child.val() });
+    const q = query(collection(db, 'mensajes'), orderBy('timestamp', 'desc'));
+    onSnapshot(q, (snapshot) => {
+      allMensajesData = [];
+      snapshot.forEach(docSnap => {
+        const data = docSnap.data();
+        allMensajesData.push({
+          id: docSnap.id,
+          ...data,
+          timestamp: data.timestamp?.toMillis ? data.timestamp.toMillis() : (data.timestamp || 0)
         });
-      }
-      mensajesFirebase.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
-
-      mensajesData = mensajesFirebase.length > 0 ? mensajesFirebase : MENSAJES_SIMULADOS;
-      updateMensajesBadge();
+      });
       renderMensajesTable();
-    });
+      const nuevos = allMensajesData.filter(m => m.estado === 'nuevo').length;
+      const badge = document.getElementById('mensajesBadge');
+      if (badge) { badge.textContent = nuevos || ''; badge.style.display = nuevos > 0 ? '' : 'none'; }
+    }, (e) => { console.warn('Error escuchando mensajes:', e); });
   } catch(e) {
-    console.warn('Firebase no disponible para mensajes:', e);
-    mensajesData = MENSAJES_SIMULADOS;
-    updateMensajesBadge();
+    console.warn('Firestore mensajes error:', e);
     renderMensajesTable();
   }
 }
 
 function updateMensajesBadge() {
-  const nuevos = mensajesData.filter(m => m.estado === 'nuevo').length;
+  const nuevos = allMensajesData.filter(m => m.estado === 'nuevo').length;
   const badge = document.getElementById('mensajesBadge');
   if (badge) badge.textContent = nuevos || '';
 }
@@ -851,12 +858,13 @@ function renderMensajesTable() {
     leido:      '<span class="badge badge-muted">👁️ Leído</span>',
     respondido: '<span class="badge badge-success">✅ Respondido</span>',
   };
+  const dataSource = allMensajesData.length > 0 ? allMensajesData : SAMPLE_FALLBACK_MENSAJES;
   const filtered = mensajesFilter === 'todos'
-    ? mensajesData
-    : mensajesData.filter(m => m.estado === mensajesFilter);
+    ? dataSource
+    : dataSource.filter(m => m.estado === mensajesFilter);
 
   tbody.innerHTML = filtered.map((m) => {
-    const id = m.id !== undefined ? m.id : mensajesData.indexOf(m);
+    const id = m.id !== undefined ? m.id : dataSource.indexOf(m);
     const fecha = m.fecha || (m.timestamp ? new Date(m.timestamp).toLocaleString('es-ES', { day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit' }) : '—');
     return `
     <tr class="expandable-row" onclick="toggleMensaje('${escHtml(String(id))}')">
@@ -884,20 +892,16 @@ function toggleMensaje(id) {
   const row = document.getElementById('msg-expand-' + id);
   if (!row) return;
   row.style.display = row.style.display === 'none' ? '' : 'none';
-  const m = mensajesData.find(m => String(m.id) === String(id)) || mensajesData[parseInt(id)];
+  const m = allMensajesData.find(m => String(m.id) === String(id)) || allMensajesData[parseInt(id)];
   if (m && m.estado === 'nuevo') {
     marcarMensaje(id, 'leido');
   }
 }
-function marcarMensaje(id, estado) {
-  // Intentar actualizar en Firebase
+async function marcarMensaje(id, estado) {
   try {
-    update(ref(db, 'mensajes/' + id), { estado })
-      .catch(e => console.warn('Error actualizando mensaje:', e));
-  } catch(e) {
-    console.warn('Firebase no disponible:', e);
-  }
-  const m = mensajesData.find(m => String(m.id) === String(id)) || mensajesData[parseInt(id)];
+    await updateDoc(doc(db, 'mensajes', id), { estado });
+  } catch(e) { console.warn('Error actualizando mensaje en Firestore:', e); }
+  const m = allMensajesData.find(m => String(m.id) === String(id)) || allMensajesData[parseInt(id)];
   if (m) m.estado = estado;
   updateMensajesBadge();
   renderMensajesTable();
@@ -1098,6 +1102,30 @@ function initMobileSidebar() {
   });
 }
 
+// ===== FIRESTORE: DELIVERY =====
+function loadDeliveryFromFirestore() {
+  try {
+    getDoc(doc(db, 'config', 'delivery')).then(snap => {
+      if (!snap.exists()) return;
+      const data = snap.data();
+      const slider = document.getElementById('deliveryTimeInput');
+      const display = document.getElementById('deliveryTimeDisplay2');
+      if (slider) slider.value = data.time || 30;
+      if (display) display.textContent = (data.time || 30) + ' min';
+      document.querySelectorAll('.delivery-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.status === (data.status || 'open'));
+      });
+      const dashTime = document.getElementById('dash-delivery-time');
+      if (dashTime) dashTime.textContent = (data.time || 30) + ' min';
+      const dashStatus = document.getElementById('dash-delivery-status');
+      if (dashStatus) {
+        const labels = { open: 'Abierto', busy: 'Alta demanda', closed: 'Cerrado' };
+        dashStatus.textContent = labels[data.status] || 'Abierto';
+      }
+    });
+  } catch(e) { console.warn('Error cargando delivery Firestore:', e); }
+}
+
 // ===== INIT =====
 document.addEventListener('DOMContentLoaded', () => {
   checkSession();
@@ -1111,10 +1139,7 @@ document.addEventListener('DOMContentLoaded', () => {
   updateMensajesBadge();
 
   // Cargar datos para tablas que se renderizarán cuando se visite
-  initPedidos();
   initMenu();
-  initReservas();
-  initMensajes();
   initResenas();
   renderOfertas();
 
@@ -1132,6 +1157,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Mostrar dashboard por defecto
   showSection('dashboard');
+
+  // Inicializar Firestore
+  initFirestorePedidos();
+  initFirestoreReservas();
+  initFirestoreMensajes();
+  loadDeliveryFromFirestore();
 });
 
 // ===== FUNCIONES MOVIDAS DESDE INLINE SCRIPT =====
@@ -1157,33 +1188,33 @@ function guardarNuevaOferta() {
   showToast('✅ Oferta añadida');
 }
 
-// ===== EXPONER FUNCIONES GLOBALES PARA ONCLICK INLINE =====
+// ===== EXPOSE TO WINDOW FOR HTML onclick ATTRIBUTES =====
 window.logout = logout;
 window.showSection = showSection;
-window.openModal = openModal;
-window.closeModal = closeModal;
 window.setPedidosFilter = setPedidosFilter;
-window.setPedidosSearch = function(q) { pedidosSearch = q; renderPedidosTable(); };
-window.renderPedidosTable = renderPedidosTable;
-window.cambiarEstadoPedido = cambiarEstadoPedido;
 window.setMenuCat = setMenuCat;
-window.editarPrecio = editarPrecio;
-window.cancelarEditPrecio = cancelarEditPrecio;
-window.guardarPrecio = guardarPrecio;
-window.guardarNuevoProducto = guardarNuevoProducto;
-window.toggleOferta = toggleOferta;
-window.actualizarOferta = actualizarOferta;
-window.saveFlashOffer = saveFlashOffer;
-window.guardarNuevaOferta = guardarNuevaOferta;
+window.setReservasFilter = setReservasFilter;
+window.setMensajesFilter = setMensajesFilter;
 window.setDeliveryStatus = setDeliveryStatus;
 window.saveDeliverySettings = saveDeliverySettings;
 window.saveSchedule = saveSchedule;
-window.setReservasFilter = setReservasFilter;
-window.cambiarEstadoReserva = cambiarEstadoReserva;
-window.setMensajesFilter = setMensajesFilter;
-window.toggleMensaje = toggleMensaje;
-window.marcarMensaje = marcarMensaje;
-window.toggleResena = toggleResena;
+window.saveFlashOffer = saveFlashOffer;
+window.openModal = openModal;
+window.closeModal = closeModal;
+window.renderPedidosTable = renderPedidosTable;
+window.guardarNuevoProducto = guardarNuevoProducto;
+window.guardarNuevaOferta = guardarNuevaOferta;
 window.guardarNuevaResena = guardarNuevaResena;
 window.saveConfig = saveConfig;
 window.cambiarPassword = cambiarPassword;
+window.setPedidosSearch = function(q) { pedidosSearch = q; renderPedidosTable(); };
+window.cambiarEstadoPedido = cambiarEstadoPedido;
+window.editarPrecio = editarPrecio;
+window.cancelarEditPrecio = cancelarEditPrecio;
+window.guardarPrecio = guardarPrecio;
+window.toggleOferta = toggleOferta;
+window.actualizarOferta = actualizarOferta;
+window.cambiarEstadoReserva = cambiarEstadoReserva;
+window.toggleMensaje = toggleMensaje;
+window.marcarMensaje = marcarMensaje;
+window.toggleResena = toggleResena;
