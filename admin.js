@@ -1,5 +1,7 @@
 /* ===== admin.js — Panel de Administración Nápoles Chipiona ===== */
 
+import { db, ref, set, get, onValue, push, update } from './firebase.js';
+
 'use strict';
 
 // ===== UTILIDADES =====
@@ -195,6 +197,26 @@ const MENU_PRODUCTOS = [
 ];
 
 // ===== SECCIÓN 1: DASHBOARD =====
+let allPedidosFirebase = [];
+
+function calcularStatsHoy(pedidos) {
+  const hoy = new Date();
+  const pedidosHoy = pedidos.filter(p => {
+    if (!p.timestamp) return false;
+    const fecha = new Date(p.timestamp);
+    return fecha.getDate() === hoy.getDate() &&
+           fecha.getMonth() === hoy.getMonth() &&
+           fecha.getFullYear() === hoy.getFullYear();
+  });
+  const ingresosHoy = pedidosHoy
+    .filter(p => p.estado !== 'cancelado')
+    .reduce((sum, p) => sum + (p.total || 0), 0);
+  return {
+    pedidosHoy: pedidosHoy.length,
+    ingresosHoy: ingresosHoy.toFixed(2)
+  };
+}
+
 function renderDashboard() {
   const deliveryTime   = localStorage.getItem('napoles-delivery-time')   || '30';
   const deliveryStatus = localStorage.getItem('napoles-delivery-status') || 'open';
@@ -202,6 +224,13 @@ function renderDashboard() {
   const statusLabels = { open: '🟢 Abierto', busy: '🟡 Alta demanda', closed: '🔴 Cerrado' };
   setElText('dash-delivery-time',   deliveryTime + ' min');
   setElText('dash-delivery-status', statusLabels[deliveryStatus] || deliveryStatus);
+
+  // Actualizar estadísticas con datos reales si disponibles
+  if (allPedidosFirebase.length > 0) {
+    const stats = calcularStatsHoy(allPedidosFirebase);
+    setElText('dash-pedidos-hoy', stats.pedidosHoy);
+    setElText('dash-ingresos-hoy', stats.ingresosHoy + '€');
+  }
 
   renderBarChart();
   renderLastOrdersTable();
@@ -258,13 +287,14 @@ function renderLastOrdersTable() {
     pendiente:   '<span class="badge badge-muted">⏳ Pendiente</span>',
     cancelado:   '<span class="badge badge-danger">❌ Cancelado</span>',
   };
-  tbody.innerHTML = PEDIDOS_SIMULADOS.slice(0, 6).map(p => `
+  const source = pedidosData.length > 0 ? pedidosData : PEDIDOS_SIMULADOS;
+  tbody.innerHTML = source.slice(0, 6).map(p => `
     <tr>
-      <td><strong>${p.id}</strong></td>
-      <td>${p.fecha}</td>
-      <td>${p.productos}</td>
-      <td><strong>${p.total}</strong></td>
-      <td>${estadoBadge[p.estado] || p.estado}</td>
+      <td><strong>${escHtml(String(p.id))}</strong></td>
+      <td>${escHtml(p.fecha)}</td>
+      <td>${escHtml(p.productos)}</td>
+      <td><strong>${escHtml(p.total)}</strong></td>
+      <td>${estadoBadge[p.estado] || escHtml(p.estado)}</td>
     </tr>`).join('');
 }
 
@@ -292,9 +322,46 @@ function renderTopProducts() {
 // ===== SECCIÓN 2: PEDIDOS =====
 let pedidosFilter = 'todos';
 let pedidosSearch = '';
+let pedidosData = []; // datos activos (Firebase o simulados como fallback)
 
 function initPedidos() {
-  renderPedidosTable();
+  // Escuchar pedidos en tiempo real desde Firebase
+  try {
+    onValue(ref(db, 'pedidos'), (snapshot) => {
+      const pedidosFirebase = [];
+      if (snapshot.exists()) {
+        snapshot.forEach(child => {
+          const p = child.val();
+          // Normalizar formato para renderizado
+          const productos = Array.isArray(p.productos)
+            ? p.productos.map(x => `${x.emoji || ''} ${x.nombre} x${x.cantidad}`).join(', ')
+            : (p.productos || '');
+          pedidosFirebase.push({
+            id: child.key,
+            fecha: p.fecha ? new Date(p.fecha).toLocaleString('es-ES', { day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit' }) : '—',
+            cliente: p.cliente || 'Cliente web',
+            productos,
+            total: p.total ? p.total.toFixed(2) + '€' : '0.00€',
+            estado: p.estado || 'pendiente',
+            timestamp: p.timestamp || 0,
+            _raw: p
+          });
+        });
+      }
+      pedidosFirebase.sort((a, b) => b.timestamp - a.timestamp);
+
+      // Usar Firebase si tiene datos, si no usar simulados como fallback
+      pedidosData = pedidosFirebase.length > 0 ? pedidosFirebase : PEDIDOS_SIMULADOS;
+      allPedidosFirebase = pedidosFirebase;
+      renderPedidosTable();
+      renderLastOrdersTable();
+    });
+  } catch(e) {
+    console.warn('Firebase no disponible para pedidos:', e);
+    pedidosData = PEDIDOS_SIMULADOS;
+    allPedidosFirebase = [];
+    renderPedidosTable();
+  }
 }
 
 function setPedidosFilter(f) {
@@ -315,25 +382,25 @@ function renderPedidosTable() {
     pendiente:   '<span class="badge badge-muted">⏳ Pendiente</span>',
     cancelado:   '<span class="badge badge-danger">❌ Cancelado</span>',
   };
-  const filtered = PEDIDOS_SIMULADOS.filter(p => {
+  const filtered = pedidosData.filter(p => {
     const matchFilter = pedidosFilter === 'todos' || p.estado === pedidosFilter;
     const q = pedidosSearch.toLowerCase();
-    const matchSearch = !q || p.id.toLowerCase().includes(q) || p.productos.toLowerCase().includes(q) || p.cliente.toLowerCase().includes(q);
+    const matchSearch = !q || String(p.id).toLowerCase().includes(q) || p.productos.toLowerCase().includes(q) || String(p.cliente).toLowerCase().includes(q);
     return matchFilter && matchSearch;
   });
   tbody.innerHTML = filtered.length === 0
     ? `<tr><td colspan="7" style="text-align:center;color:var(--admin-text-muted);padding:2rem">No hay pedidos con ese filtro.</td></tr>`
     : filtered.map(p => `
     <tr>
-      <td><strong>${p.id}</strong></td>
-      <td>${p.fecha}</td>
-      <td>${p.cliente}</td>
-      <td>${p.productos}</td>
-      <td><strong>${p.total}</strong></td>
-      <td>${estadoBadge[p.estado] || p.estado}</td>
+      <td><strong>${escHtml(String(p.id))}</strong></td>
+      <td>${escHtml(p.fecha)}</td>
+      <td>${escHtml(p.cliente)}</td>
+      <td>${escHtml(p.productos)}</td>
+      <td><strong>${escHtml(p.total)}</strong></td>
+      <td>${estadoBadge[p.estado] || escHtml(p.estado)}</td>
       <td>
         <select class="form-control" style="width:auto;font-size:0.75rem;padding:0.25rem 0.5rem"
-          onchange="cambiarEstadoPedido('${p.id}',this.value)">
+          onchange="cambiarEstadoPedido('${escHtml(String(p.id))}',this.value)">
           <option value="pendiente"   ${p.estado==='pendiente'?'selected':''}>⏳ Pendiente</option>
           <option value="preparacion" ${p.estado==='preparacion'?'selected':''}>🔄 Preparación</option>
           <option value="camino"      ${p.estado==='camino'?'selected':''}>🛵 En camino</option>
@@ -345,7 +412,17 @@ function renderPedidosTable() {
 }
 
 function cambiarEstadoPedido(id, nuevoEstado) {
-  const pedido = PEDIDOS_SIMULADOS.find(p => p.id === id);
+  const estadosValidos = ['pendiente', 'preparacion', 'camino', 'entregado', 'cancelado'];
+  if (!estadosValidos.includes(nuevoEstado)) return;
+  // Intentar actualizar en Firebase primero
+  try {
+    update(ref(db, 'pedidos/' + id), { estado: nuevoEstado })
+      .catch(e => console.warn('Error actualizando pedido:', e));
+  } catch(e) {
+    console.warn('Firebase no disponible:', e);
+  }
+  // Actualizar también en memoria local (para fallback simulado)
+  const pedido = pedidosData.find(p => p.id === id);
   if (pedido) { pedido.estado = nuevoEstado; renderPedidosTable(); }
   showToast(`Pedido ${id} → ${nuevoEstado}`);
 }
@@ -488,9 +565,39 @@ function actualizarOferta(id, campo, val) {
 
 // ===== SECCIÓN 5: DELIVERY =====
 function loadDeliverySettings() {
-  const status = localStorage.getItem('napoles-delivery-status') || 'open';
-  const time   = localStorage.getItem('napoles-delivery-time')   || '30';
+  // Cargar estado desde Firebase en tiempo real
+  try {
+    get(ref(db, 'config/delivery')).then(snapshot => {
+      if (snapshot.exists()) {
+        const data = snapshot.val();
+        const status = data.status || 'open';
+        const time = data.time ? String(data.time) : '30';
+        localStorage.setItem('napoles-delivery-status', status);
+        localStorage.setItem('napoles-delivery-time', time);
+        applyDeliveryUI(status, time);
+      } else {
+        applyDeliveryUI(
+          localStorage.getItem('napoles-delivery-status') || 'open',
+          localStorage.getItem('napoles-delivery-time') || '30'
+        );
+      }
+    }).catch(e => {
+      console.warn('Error leyendo delivery de Firebase:', e);
+      applyDeliveryUI(
+        localStorage.getItem('napoles-delivery-status') || 'open',
+        localStorage.getItem('napoles-delivery-time') || '30'
+      );
+    });
+  } catch(e) {
+    console.warn('Firebase no disponible:', e);
+    applyDeliveryUI(
+      localStorage.getItem('napoles-delivery-status') || 'open',
+      localStorage.getItem('napoles-delivery-time') || '30'
+    );
+  }
+}
 
+function applyDeliveryUI(status, time) {
   document.querySelectorAll('.delivery-btn').forEach(btn => {
     btn.className = 'delivery-btn';
     if (btn.dataset.status === status) {
@@ -500,6 +607,9 @@ function loadDeliverySettings() {
 
   const timeInput = document.getElementById('deliveryTimeInput');
   if (timeInput) timeInput.value = time;
+
+  const display2 = document.getElementById('deliveryTimeDisplay2');
+  if (display2) display2.textContent = time + ' min';
 
   renderDeliveryHistory();
   loadSchedule();
@@ -519,6 +629,17 @@ function saveDeliverySettings() {
 
   localStorage.setItem('napoles-delivery-status', statusVal);
   localStorage.setItem('napoles-delivery-time', time);
+
+  // Guardar en Firebase
+  try {
+    set(ref(db, 'config/delivery'), {
+      time: parseInt(time),
+      status: statusVal,
+      updatedAt: Date.now()
+    }).catch(e => console.warn('Error guardando en Firebase:', e));
+  } catch(e) {
+    console.warn('Firebase no disponible:', e);
+  }
 
   // Guardar historial
   const history = JSON.parse(localStorage.getItem('napoles-delivery-history') || '[]');
@@ -595,14 +716,34 @@ function saveSchedule() {
 
 // ===== SECCIÓN 6: RESERVAS =====
 let reservasFilter = 'todas';
+let reservasData = []; // activos (Firebase o simulados)
 
 function initReservas() {
-  updateReservasBadge();
-  renderReservasTable();
+  // Escuchar reservas en tiempo real desde Firebase
+  try {
+    onValue(ref(db, 'reservas'), (snapshot) => {
+      const reservasFirebase = [];
+      if (snapshot.exists()) {
+        snapshot.forEach(child => {
+          reservasFirebase.push({ id: child.key, ...child.val() });
+        });
+      }
+      reservasFirebase.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+
+      reservasData = reservasFirebase.length > 0 ? reservasFirebase : RESERVAS_SIMULADAS;
+      updateReservasBadge();
+      renderReservasTable();
+    });
+  } catch(e) {
+    console.warn('Firebase no disponible para reservas:', e);
+    reservasData = RESERVAS_SIMULADAS;
+    updateReservasBadge();
+    renderReservasTable();
+  }
 }
 
 function updateReservasBadge() {
-  const pendientes = RESERVAS_SIMULADAS.filter(r => r.estado === 'pendiente').length;
+  const pendientes = reservasData.filter(r => r.estado === 'pendiente').length;
   const badge = document.getElementById('reservasBadge');
   if (badge) badge.textContent = pendientes;
 }
@@ -624,43 +765,72 @@ function renderReservasTable() {
     cancelada:  '<span class="badge badge-danger">❌ Cancelada</span>',
   };
   const filtered = reservasFilter === 'todas'
-    ? RESERVAS_SIMULADAS
-    : RESERVAS_SIMULADAS.filter(r => r.estado === reservasFilter);
+    ? reservasData
+    : reservasData.filter(r => r.estado === reservasFilter);
 
   tbody.innerHTML = filtered.length === 0
     ? `<tr><td colspan="7" style="text-align:center;color:var(--admin-text-muted);padding:2rem">Sin reservas.</td></tr>`
-    : filtered.map((r, i) => `
+    : filtered.map((r) => `
     <tr>
-      <td><strong>${r.nombre}</strong></td>
-      <td>${r.fecha}</td>
-      <td>${r.hora}</td>
-      <td>${r.personas} pers.</td>
-      <td title="${r.notas}">${r.notas ? r.notas.substring(0, 30) + (r.notas.length > 30 ? '…' : '') : '—'}</td>
-      <td>${estadoBadge[r.estado]}</td>
+      <td><strong>${escHtml(r.nombre || '')}</strong></td>
+      <td>${escHtml(r.fecha || '')}</td>
+      <td>${escHtml(r.hora || '')}</td>
+      <td>${escHtml(String(r.personas || ''))} pers.</td>
+      <td title="${escHtml(r.notas || '')}">${r.notas ? escHtml(r.notas.substring(0, 30)) + (r.notas.length > 30 ? '…' : '') : '—'}</td>
+      <td>${estadoBadge[r.estado] || escHtml(r.estado || '')}</td>
       <td style="display:flex;gap:0.3rem;flex-wrap:wrap">
-        ${r.estado !== 'confirmada' ? `<button class="btn btn-success btn-xs" onclick="cambiarEstadoReserva(${RESERVAS_SIMULADAS.indexOf(r)},'confirmada')">✅</button>` : ''}
-        ${r.estado !== 'cancelada'  ? `<button class="btn btn-danger btn-xs"  onclick="cambiarEstadoReserva(${RESERVAS_SIMULADAS.indexOf(r)},'cancelada')">❌</button>` : ''}
+        ${r.estado !== 'confirmada' ? `<button class="btn btn-success btn-xs" onclick="cambiarEstadoReserva('${escHtml(String(r.id || reservasData.indexOf(r)))}','confirmada')">✅</button>` : ''}
+        ${r.estado !== 'cancelada'  ? `<button class="btn btn-danger btn-xs"  onclick="cambiarEstadoReserva('${escHtml(String(r.id || reservasData.indexOf(r)))}','cancelada')">❌</button>` : ''}
       </td>
     </tr>`).join('');
 }
 
-function cambiarEstadoReserva(idx, estado) {
-  RESERVAS_SIMULADAS[idx].estado = estado;
+function cambiarEstadoReserva(id, estado) {
+  // Intentar actualizar en Firebase
+  try {
+    update(ref(db, 'reservas/' + id), { estado })
+      .catch(e => console.warn('Error actualizando reserva:', e));
+  } catch(e) {
+    console.warn('Firebase no disponible:', e);
+  }
+  // Actualizar en memoria local
+  const reserva = reservasData.find(r => String(r.id) === String(id)) || reservasData[parseInt(id)];
+  if (reserva) { reserva.estado = estado; }
   updateReservasBadge();
   renderReservasTable();
-  showToast(`Reserva de ${RESERVAS_SIMULADAS[idx].nombre} → ${estado}`);
+  showToast(`Reserva → ${estado}`);
 }
 
 // ===== SECCIÓN 7: MENSAJES =====
 let mensajesFilter = 'todos';
+let mensajesData = []; // activos (Firebase o simulados)
 
 function initMensajes() {
-  updateMensajesBadge();
-  renderMensajesTable();
+  // Escuchar mensajes en tiempo real desde Firebase
+  try {
+    onValue(ref(db, 'mensajes'), (snapshot) => {
+      const mensajesFirebase = [];
+      if (snapshot.exists()) {
+        snapshot.forEach(child => {
+          mensajesFirebase.push({ id: child.key, ...child.val() });
+        });
+      }
+      mensajesFirebase.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+
+      mensajesData = mensajesFirebase.length > 0 ? mensajesFirebase : MENSAJES_SIMULADOS;
+      updateMensajesBadge();
+      renderMensajesTable();
+    });
+  } catch(e) {
+    console.warn('Firebase no disponible para mensajes:', e);
+    mensajesData = MENSAJES_SIMULADOS;
+    updateMensajesBadge();
+    renderMensajesTable();
+  }
 }
 
 function updateMensajesBadge() {
-  const nuevos = MENSAJES_SIMULADOS.filter(m => m.estado === 'nuevo').length;
+  const nuevos = mensajesData.filter(m => m.estado === 'nuevo').length;
   const badge = document.getElementById('mensajesBadge');
   if (badge) badge.textContent = nuevos || '';
 }
@@ -682,43 +852,53 @@ function renderMensajesTable() {
     respondido: '<span class="badge badge-success">✅ Respondido</span>',
   };
   const filtered = mensajesFilter === 'todos'
-    ? MENSAJES_SIMULADOS
-    : MENSAJES_SIMULADOS.filter(m => m.estado === mensajesFilter);
+    ? mensajesData
+    : mensajesData.filter(m => m.estado === mensajesFilter);
 
-  tbody.innerHTML = filtered.map((m, i) => {
-    const globalIdx = MENSAJES_SIMULADOS.indexOf(m);
+  tbody.innerHTML = filtered.map((m) => {
+    const id = m.id !== undefined ? m.id : mensajesData.indexOf(m);
+    const fecha = m.fecha || (m.timestamp ? new Date(m.timestamp).toLocaleString('es-ES', { day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit' }) : '—');
     return `
-    <tr class="expandable-row" onclick="toggleMensaje(${globalIdx})">
-      <td><strong>${m.nombre}</strong></td>
-      <td style="color:var(--admin-text-muted)">${m.email}</td>
-      <td>${m.mensaje.substring(0, 60)}${m.mensaje.length > 60 ? '…' : ''}</td>
-      <td>${m.fecha}</td>
-      <td>${estadoBadge[m.estado] || m.estado}</td>
+    <tr class="expandable-row" onclick="toggleMensaje('${escHtml(String(id))}')">
+      <td><strong>${escHtml(m.nombre || '')}</strong></td>
+      <td style="color:var(--admin-text-muted)">${escHtml(m.email || '')}</td>
+      <td>${escHtml((m.mensaje || '').substring(0, 60))}${(m.mensaje || '').length > 60 ? '…' : ''}</td>
+      <td>${escHtml(fecha)}</td>
+      <td>${estadoBadge[m.estado] || escHtml(m.estado || '')}</td>
       <td onclick="event.stopPropagation()">
-        ${m.estado !== 'leido' && m.estado !== 'respondido' ? `<button class="btn btn-secondary btn-xs" onclick="marcarMensaje(${globalIdx},'leido')">👁️ Leer</button>` : ''}
+        ${m.estado !== 'leido' && m.estado !== 'respondido' ? `<button class="btn btn-secondary btn-xs" onclick="marcarMensaje('${escHtml(String(id))}','leido')">👁️ Leer</button>` : ''}
       </td>
     </tr>
-    <tr id="msg-expand-${globalIdx}" style="display:none">
+    <tr id="msg-expand-${escHtml(String(id))}" style="display:none">
       <td colspan="6" style="background:rgba(255,255,255,0.02);padding:0.8rem 0.9rem">
         <strong>Mensaje completo:</strong><br/>
-        <p style="color:var(--admin-text-muted);margin-top:0.4rem">${m.mensaje}</p>
+        <p style="color:var(--admin-text-muted);margin-top:0.4rem">${escHtml(m.mensaje || '')}</p>
         <br/>
-        <button class="btn btn-secondary btn-xs" onclick="marcarMensaje(${globalIdx},'respondido');event.stopPropagation()">✅ Marcar respondido</button>
+        <button class="btn btn-secondary btn-xs" onclick="marcarMensaje('${escHtml(String(id))}','respondido');event.stopPropagation()">✅ Marcar respondido</button>
       </td>
     </tr>`;
   }).join('');
 }
 
-function toggleMensaje(idx) {
-  const row = document.getElementById('msg-expand-' + idx);
+function toggleMensaje(id) {
+  const row = document.getElementById('msg-expand-' + id);
   if (!row) return;
   row.style.display = row.style.display === 'none' ? '' : 'none';
-  if (MENSAJES_SIMULADOS[idx].estado === 'nuevo') {
-    marcarMensaje(idx, 'leido');
+  const m = mensajesData.find(m => String(m.id) === String(id)) || mensajesData[parseInt(id)];
+  if (m && m.estado === 'nuevo') {
+    marcarMensaje(id, 'leido');
   }
 }
-function marcarMensaje(idx, estado) {
-  MENSAJES_SIMULADOS[idx].estado = estado;
+function marcarMensaje(id, estado) {
+  // Intentar actualizar en Firebase
+  try {
+    update(ref(db, 'mensajes/' + id), { estado })
+      .catch(e => console.warn('Error actualizando mensaje:', e));
+  } catch(e) {
+    console.warn('Firebase no disponible:', e);
+  }
+  const m = mensajesData.find(m => String(m.id) === String(id)) || mensajesData[parseInt(id)];
+  if (m) m.estado = estado;
   updateMensajesBadge();
   renderMensajesTable();
 }
@@ -938,6 +1118,70 @@ document.addEventListener('DOMContentLoaded', () => {
   initResenas();
   renderOfertas();
 
+  // Sync slider display
+  const slider = document.getElementById('deliveryTimeInput');
+  const display = document.getElementById('deliveryTimeDisplay2');
+  if (slider && display) {
+    const saved = localStorage.getItem('napoles-delivery-time') || '30';
+    slider.value = saved;
+    display.textContent = saved + ' min';
+    slider.addEventListener('input', () => {
+      display.textContent = slider.value + ' min';
+    });
+  }
+
   // Mostrar dashboard por defecto
   showSection('dashboard');
 });
+
+// ===== FUNCIONES MOVIDAS DESDE INLINE SCRIPT =====
+function saveFlashOffer() {
+  const discount = document.getElementById('flashDiscount')?.value;
+  const text     = document.getElementById('flashText')?.value;
+  const config   = JSON.parse(localStorage.getItem('napoles-config') || '{}');
+  config.descuentoFlash = discount;
+  config.flashText      = text;
+  localStorage.setItem('napoles-config', JSON.stringify(config));
+  showToast('✅ Oferta flash actualizada');
+}
+
+function guardarNuevaOferta() {
+  const tag    = document.getElementById('newOfTag')?.value.trim()    || 'NUEVO';
+  const titulo = document.getElementById('newOfTitulo')?.value.trim();
+  const desc   = document.getElementById('newOfDesc')?.value.trim();
+  const precio = document.getElementById('newOfPrecio')?.value.trim();
+  if (!titulo) { showToast('El título es obligatorio', 'error'); return; }
+  OFERTAS.push({ id: OFERTAS.length, tag, titulo, descripcion: desc, precio, activa: true });
+  closeModal('addOferta');
+  renderOfertas();
+  showToast('✅ Oferta añadida');
+}
+
+// ===== EXPONER FUNCIONES GLOBALES PARA ONCLICK INLINE =====
+window.logout = logout;
+window.showSection = showSection;
+window.openModal = openModal;
+window.closeModal = closeModal;
+window.setPedidosFilter = setPedidosFilter;
+window.cambiarEstadoPedido = cambiarEstadoPedido;
+window.setMenuCat = setMenuCat;
+window.editarPrecio = editarPrecio;
+window.cancelarEditPrecio = cancelarEditPrecio;
+window.guardarPrecio = guardarPrecio;
+window.guardarNuevoProducto = guardarNuevoProducto;
+window.toggleOferta = toggleOferta;
+window.actualizarOferta = actualizarOferta;
+window.saveFlashOffer = saveFlashOffer;
+window.guardarNuevaOferta = guardarNuevaOferta;
+window.setDeliveryStatus = setDeliveryStatus;
+window.saveDeliverySettings = saveDeliverySettings;
+window.saveSchedule = saveSchedule;
+window.setReservasFilter = setReservasFilter;
+window.cambiarEstadoReserva = cambiarEstadoReserva;
+window.setMensajesFilter = setMensajesFilter;
+window.toggleMensaje = toggleMensaje;
+window.marcarMensaje = marcarMensaje;
+window.toggleResena = toggleResena;
+window.guardarNuevaResena = guardarNuevaResena;
+window.saveConfig = saveConfig;
+window.cambiarPassword = cambiarPassword;

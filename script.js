@@ -1,3 +1,5 @@
+import { db, ref, set, get, onValue, push, update } from './firebase.js';
+
 // ===== Cart State =====
 let cart = JSON.parse(localStorage.getItem('napoles-cart') || '[]');
 
@@ -250,6 +252,20 @@ function initContactForm() {
   const success = document.getElementById('formSuccess');
   form?.addEventListener('submit', (e) => {
     e.preventDefault();
+    const mensajeData = {
+      nombre: document.getElementById('contactName').value.trim(),
+      email: document.getElementById('contactEmail').value.trim(),
+      mensaje: document.getElementById('contactMsg').value.trim(),
+      estado: 'nuevo',
+      timestamp: Date.now()
+    };
+    try {
+      push(ref(db, 'mensajes'), mensajeData)
+        .then(() => console.log('Mensaje guardado en Firebase'))
+        .catch(e => console.warn('Error guardando mensaje:', e));
+    } catch(e) {
+      console.warn('Firebase no disponible:', e);
+    }
     success.style.display = 'block';
     form.reset();
     setTimeout(() => success.style.display = 'none', 4000);
@@ -273,7 +289,23 @@ function initBirthdayForm() {
       return;
     }
 
-    console.log('Reserva cumpleaños:', { name, date, time, people, notes });
+    const reservaData = {
+      nombre: name,
+      fecha: date,
+      hora: time,
+      personas: people,
+      notas: notes,
+      estado: 'pendiente',
+      timestamp: Date.now()
+    };
+    try {
+      push(ref(db, 'reservas'), reservaData)
+        .then(() => console.log('Reserva guardada en Firebase'))
+        .catch(e => console.warn('Error guardando reserva:', e));
+    } catch(e) {
+      console.warn('Firebase no disponible:', e);
+    }
+
     success.style.display = 'flex';
     form.reset();
     setTimeout(() => success.style.display = 'none', 6000);
@@ -298,6 +330,23 @@ function saveDeliverySettings() {
 
 function initDeliveryTime() {
   loadDeliveryTime();
+
+  // Escuchar cambios en tiempo real desde Firebase
+  try {
+    onValue(ref(db, 'config/delivery'), (snapshot) => {
+      if (snapshot.exists()) {
+        const data = snapshot.val();
+        const time = data.time ? String(data.time) : '30';
+        const status = data.status || 'open';
+        // Actualizar localStorage con los datos de Firebase
+        localStorage.setItem('napoles-delivery-time', time);
+        localStorage.setItem('napoles-delivery-status', status);
+        loadDeliveryTime(); // re-renderizar con nuevos datos
+      }
+    });
+  } catch(e) {
+    console.warn('Firebase no disponible, usando localStorage:', e);
+  }
 }
 
 function loadDeliveryTime() {
@@ -348,6 +397,24 @@ function checkout() {
     return;
   }
   const time = localStorage.getItem('napoles-delivery-time') || '30';
+
+  // Guardar pedido en Firebase
+  const pedidoData = {
+    fecha: new Date().toISOString(),
+    productos: cart.map(i => ({ nombre: i.name, precio: i.price, cantidad: i.qty, emoji: i.emoji })),
+    total: parseFloat(getCartTotal().toFixed(2)),
+    estado: 'pendiente',
+    timestamp: Date.now()
+  };
+
+  try {
+    push(ref(db, 'pedidos'), pedidoData)
+      .then(() => console.log('Pedido guardado en Firebase'))
+      .catch(e => console.warn('Error guardando pedido:', e));
+  } catch(e) {
+    console.warn('Firebase no disponible:', e);
+  }
+
   alert(`¡Pedido recibido! 🍔\nTotal: ${getCartTotal().toFixed(2)}€\n\nTiempo estimado de entrega: ~${time} minutos\n\nTe llamaremos para confirmar.\n¡Gracias por elegir Nápoles Chipiona!`);
   cart = [];
   saveCart();
@@ -371,3 +438,10 @@ document.addEventListener('DOMContentLoaded', () => {
   initDeliveryTime();
   initSmoothScroll();
 });
+
+// Exponer funciones globales para los onclick inline del HTML
+window.openCart = openCart;
+window.closeCart = closeCart;
+window.checkout = checkout;
+window.openAdminPanel = openAdminPanel;
+window.saveDeliverySettings = saveDeliverySettings;

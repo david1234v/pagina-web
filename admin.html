@@ -796,44 +796,6 @@
   </div>
 </div>
 
-<script src="admin.js"></script>
-<script>
-  // Funciones extra que necesitan el HTML cargado
-  function saveFlashOffer() {
-    const discount = document.getElementById('flashDiscount')?.value;
-    const text     = document.getElementById('flashText')?.value;
-    const config   = JSON.parse(localStorage.getItem('napoles-config') || '{}');
-    config.descuentoFlash = discount;
-    config.flashText      = text;
-    localStorage.setItem('napoles-config', JSON.stringify(config));
-    showToast('✅ Oferta flash actualizada');
-  }
-
-  function guardarNuevaOferta() {
-    const tag    = document.getElementById('newOfTag')?.value.trim()    || 'NUEVO';
-    const titulo = document.getElementById('newOfTitulo')?.value.trim();
-    const desc   = document.getElementById('newOfDesc')?.value.trim();
-    const precio = document.getElementById('newOfPrecio')?.value.trim();
-    if (!titulo) { showToast('El título es obligatorio', 'error'); return; }
-    OFERTAS.push({ id: OFERTAS.length, tag, titulo, descripcion: desc, precio, activa: true });
-    closeModal('addOferta');
-    renderOfertas();
-    showToast('✅ Oferta añadida');
-  }
-
-  // Sync slider display on load
-  document.addEventListener('DOMContentLoaded', () => {
-    const slider = document.getElementById('deliveryTimeInput');
-    const display = document.getElementById('deliveryTimeDisplay2');
-    if (slider && display) {
-      const saved = localStorage.getItem('napoles-delivery-time') || '30';
-      slider.value = saved;
-      display.textContent = saved + ' min';
-      slider.addEventListener('input', () => {
-        display.textContent = slider.value + ' min';
-      });
-    }
-  });
-</script>
+<script type="module" src="admin.js"></script>
 </body>
 </html>
